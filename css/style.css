@@ -2,10 +2,37 @@ body {
   background-color: #ffeaea;
   font-family: Poppins, sans-serif;
   color: hsl(230, 8%, 45%);
+  position: relative;
 }
 
-#home h2 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: black;
+}
+
+.container {
+  padding-right: 40px;
+  padding-left: 40px;
+}
+
+#sidebar-fixed {
+  display: none;
+}
+#sidebar-absolute {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99;
+}
+
+#sidebar-absolute img {
+  margin-top: 10px;
+  width: 25px;
 }
 
 nav .active {
@@ -13,20 +40,93 @@ nav .active {
 }
 
 nav .active::after {
-  content: '';
+  content: "";
+  display: block;
+  width: 50%;
+  border-bottom: 3px solid #fa8181;
+  margin: ;
+  padding-bottom: 5px;
+  margin-bottom: -8px;
+}
+
+#home {
+  position: relative;
+}
+
+#home .profile {
+  width: 200px;
+  overflow: hidden;
+  border-bottom-left-radius: 25px;
+  border-top-right-radius: 25px;
+  margin-bottom: 20px;
+}
+
+#home .profile img {
+  width: 100%;
+}
+
+#home .download {
+  border-radius: 5px;
+}
+
+#home .download span {
+  margin-right: 5px;
+}
+
+#home .download img {
+  width: 20px;
+}
+
+#skills .box {
+  margin-bottom: 40px;
+}
+
+#skills .dropdown {
+  cursor: pointer;
+}
+
+#skills .dropdown img {
+  width: 40px;
+  margin-right: 15px;
+}
+
+#skills .dropdown .title {
+  margin-right: 15px;
+}
+
+#skills .dropdown h4 {
+  margin-bottom: 0px;
+}
+
+#skills .dropdown p {
+  margin: 0;
+}
+
+#skills .dropdown .arrow {
+  transform: rotate(90deg);
+  margin: 0;
+}
+
+#skills .content span::after {
+  content: "";
   display: block;
   width: 50%;
   border-bottom: 3px solid #fa8181;
   margin: auto;
   padding-bottom: 5px;
   margin-bottom: -8px;
-  }
+}
 
+.rotate {
+  transform: rotate(90deg);
+  transition: 0.3s;
+}
 
+.content-disabled {
+  display: none;
+}
 
-
-
-@media (min-width:768px) {
+@media (min-width: 992px) {
   .container {
     padding: 0 100px;
   }
@@ -42,9 +142,13 @@ nav .active::after {
   .nav-link:hover {
     color: #fa8181 !important;
   }
-  
-  .nav-link:hover::after {
-    content: '';
+
+  nav .active::after {
+    margin: auto;
+  }
+
+  .nav-hover:hover::after {
+    content: "";
     display: block;
     width: 50%;
     border-bottom: 3px solid #fa8181;
@@ -55,5 +159,23 @@ nav .active::after {
 
   .collapse {
     display: none !important;
+  }
+
+  #sidebar-absolute {
+    display: none;
+  }
+
+  #sidebar-fixed {
+    display: block;
+    position: fixed;
+    left: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99;
+  }
+
+  #sidebar-fixed img {
+    margin-top: 10px;
+    width: 25px;
   }
 }
