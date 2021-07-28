@@ -35,6 +35,11 @@ section {
   padding-top: 100px;
 }
 
+footer {
+  margin-top: 70px;
+  padding-top: 20px;
+}
+
 .container {
   padding-right: 40px;
   padding-left: 40px;
@@ -50,6 +55,7 @@ section {
   transform: translateY(-50%);
   z-index: 99;
   border-left: 3px solid #fa8181;
+  padding: 0;
 }
 
 #sidebar-absolute img {
@@ -58,7 +64,7 @@ section {
 }
 
 .navbar {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   z-index: 99;
   width: 100%;
@@ -88,6 +94,10 @@ nav .active::after {
   border-bottom-left-radius: 25px;
   border-top-right-radius: 25px;
   margin-bottom: 20px;
+}
+
+#home .profile {
+  box-shadow: 0 0.1px 6px 0.5px #fa8181;
 }
 
 #home .profile img {
@@ -156,7 +166,7 @@ nav .active::after {
   content: "";
   display: block;
   width: 50%;
-  border-bottom: 3px solid #fa8181;
+  border-bottom: 2px solid #fa8181;
   margin: auto;
   padding-bottom: 5px;
   margin-bottom: -8px;
@@ -171,13 +181,99 @@ nav .active::after {
   display: none;
 }
 
+#experience .card:hover {
+  box-shadow: 0 0.1px 6px 0.5px #fa8181;
+}
+
+#experience .card-body {
+  padding: 80px 0 40px 35px;
+  position: relative;
+}
+
+#experience .card .icon {
+  width: 25px;
+  margin-bottom: 10px;
+}
+
+#experience .card p {
+  font-size: 14px;
+}
+
+#experience .card span {
+  font-size: 12px;
+  color: #fa8181;
+  text-decoration: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+}
+
+#experience .card span:hover {
+  border-bottom: 0.5px solid #fa8181;
+}
+
+#experience .card span img {
+  width: 25px;
+  margin: 0;
+}
+
 #portfolio .card {
   border-radius: 15px;
   overflow: hidden;
+  margin-bottom: 20px;
 }
 
 #portfolio .card:hover {
   box-shadow: 0 0.1px 6px 0.5px #fa8181;
+}
+
+#portfolio .card a {
+  color: #fa8181;
+}
+
+#portfolio .portfolio-button {
+  border-radius: 5px;
+  background-color: #fa8181;
+  border: #fa8181;
+  padding: 10px 15px;
+  /* width: 200px; */
+}
+
+#portfolio .portfolio-button:hover {
+  box-shadow: 0 0.1px 6px 0.5px #fa8181;
+}
+
+#portfolio .portfolio-button span {
+  margin-right: 5px;
+}
+
+#portfolio .portfolio-button img {
+  width: 20px;
+}
+
+#blog .wrapper {
+  width: 700px;
+}
+
+#blog .carousel {
+  display: inline-block;
+}
+
+#blog .carousel .carousel-indicators {
+  margin-bottom: -20px;
+}
+
+#blog .carousel-item img {
+  background-size: cover;
+}
+
+#blog .caption p {
+  font-size: 12px;
+}
+
+#blog .caption a {
+  color: #fa8181;
+  font-size: 14px;
 }
 
 #contact .box {
@@ -211,12 +307,14 @@ nav .active::after {
 }
 
 #contact .form input,
-#contact .form textarea {
+#contact .form textarea,
+#contact .form textarea:focus {
   background-color: transparent;
   border: none;
   width: 100%;
   outline: none;
   border-bottom: 2px solid #ffc3c3;
+  border-color: transparent;
 }
 
 #contact .submit a {
@@ -224,6 +322,10 @@ nav .active::after {
   background-color: #fa8181;
   padding: 5px 10px;
   border-radius: 5px;
+}
+
+#contact .submit a:hover {
+  box-shadow: 0 0.1px 6px 0.5px #fa8181;
 }
 
 #contact .submit span {
@@ -235,6 +337,26 @@ nav .active::after {
 
 #contact .submit img {
   width: 20px;
+}
+
+footer {
+  background-color: #fa8181;
+  color: white;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+footer a:hover {
+  font-weight: bold;
+  color: white;
+}
+
+footer img {
+  width: 25px;
 }
 
 @media (min-width: 992px) {
@@ -290,5 +412,9 @@ nav .active::after {
   #sidebar-fixed img {
     margin: 5px;
     width: 25px;
+  }
+
+  #experience .container {
+    padding: 0 150px;
   }
 }
