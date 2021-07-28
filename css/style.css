@@ -84,11 +84,11 @@ nav .active::after {
   margin-bottom: -8px;
 }
 
-#home {
+#about {
   position: relative;
 }
 
-#home .profile {
+#about .profile {
   width: 200px;
   overflow: hidden;
   border-bottom-left-radius: 25px;
@@ -96,30 +96,30 @@ nav .active::after {
   margin-bottom: 20px;
 }
 
-#home .profile {
+#about .profile {
   box-shadow: 0 0.1px 6px 0.5px #fa8181;
 }
 
-#home .profile img {
+#about .profile img {
   width: 100%;
 }
 
-#home .download {
+#about .download {
   border-radius: 5px;
   background-color: #fa8181;
   border: #fa8181;
   padding: 10px 15px;
 }
 
-#home .download:hover {
+#about .download:hover {
   box-shadow: 0 0.1px 6px 0.5px #fa8181;
 }
 
-#home .download span {
+#about .download span {
   margin-right: 5px;
 }
 
-#home .download img {
+#about .download img {
   width: 20px;
 }
 
@@ -165,8 +165,8 @@ nav .active::after {
 #skills .content span::after {
   content: "";
   display: block;
-  width: 50%;
-  border-bottom: 2px solid #fa8181;
+  width: 60%;
+  border-bottom: 2px solid #f8c8c8;
   margin: auto;
   padding-bottom: 5px;
   margin-bottom: -8px;
@@ -186,7 +186,7 @@ nav .active::after {
 }
 
 #experience .card-body {
-  padding: 80px 0 40px 35px;
+  padding: 80px 10px 40px 25px;
   position: relative;
 }
 
@@ -217,18 +217,62 @@ nav .active::after {
   margin: 0;
 }
 
+#experience .modal-content {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 0.1px 3px 0.5px #fa8181;
+  border: none;
+}
+
+#experience .modal-header {
+  padding-bottom: 0;
+  border-bottom: 1px solid #fa8181;
+}
+
+#experience .modal-header h5 {
+  color: #fa8181;
+  font-weight: bold;
+}
+
+#experience .modal-header p {
+  margin: 0;
+}
+
+#experience .modal-header .btn-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #fa8181 !important;
+}
+
+#experience .learn img {
+  width: 20px;
+  margin-right: 10px;
+}
+
+#experience .learn p {
+  font-size: 14px;
+}
+
 #portfolio .card {
   border-radius: 15px;
   overflow: hidden;
   margin-bottom: 20px;
+  position: relative;
 }
 
 #portfolio .card:hover {
   box-shadow: 0 0.1px 6px 0.5px #fa8181;
 }
 
+#portfolio .card p {
+  margin-bottom: 30px;
+}
+
 #portfolio .card a {
   color: #fa8181;
+  position: absolute;
+  bottom: 15px;
 }
 
 #portfolio .portfolio-button {
@@ -252,7 +296,7 @@ nav .active::after {
 }
 
 #blog .wrapper {
-  width: 700px;
+  width: 800px;
 }
 
 #blog .carousel {
