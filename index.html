@@ -361,10 +361,10 @@ world.style.width=W+'px';world.style.height=H+'px';
 
 /* ---------- content ---------- */
 const QUESTS=[
- {f:'ios',r:['leg','Legendary'],t:'Melodissimo',who:'Apple WWDC22 Swift Student Challenge',img:'melodissimo',
-  sum:'An interactive Swift Playgrounds app with an on-screen melodica that tells the story of my school\'s melodica through code.',
+ {f:'ios',r:['leg','Legendary'],t:'Melodissimo',who:'Apple WWDC22 Swift Student Challenge',img:'melodissimo',url:'https://melodissimo.anoran.id',
+  sum:'A pianika rhythm-adventure game for kids (iPad & iPhone) · numeral notation, 16 Indonesian songs, monster battles, and a 100-stage tour of Nusantara. Started as an interactive Swift Playgrounds app with an on-screen melodica telling my school\'s story through code. Play it at <a href="https://melodissimo.anoran.id" target="_blank" rel="noopener">melodissimo.anoran.id</a>.',
   wins:['WWDC22 winner','App Store Top 50 Music'],
-  log:{Built:'My first Swift Playground and my first SwiftUI project, from concept to submission.',Result:'Apple selected it as a winning WWDC22 Swift Student Challenge submission, and it later reached the App Store Top 50 in Music.'},
+  log:{Built:'My first Swift Playground and my first SwiftUI project, from concept to submission.',Result:'Apple selected it as a winning WWDC22 Swift Student Challenge submission, and it later reached the App Store Top 50 in Music. Now a full game · visit melodissimo.anoran.id.'},
   tags:['SwiftUI','Swift Playgrounds']},
  {f:'sec',r:['epic','Epic'],t:'Authenticator SDK (in progress)',who:'PT Bank Mandiri · Division initiative',
   sum:'An SDK that gives the bank\'s internal apps one shared, secure way to log users in. I\'m building it from scratch, from the first idea to working code.',
@@ -391,10 +391,10 @@ const QUESTS=[
   wins:['50+ tickets / month','5+ features'],
   log:{Built:'New features and fixes in SwiftUI with Combine and an MVVM-R architecture.',Result:'Closed 50+ tickets a month and delivered 5+ features on time.'},
   tags:['SwiftUI','Combine','MVVM-R']},
- {f:'biz',r:['epic','Epic'],t:'PT Anoran Technology',who:'Founder · B2B automation',
-  sum:'My own company. We replace slow manual reporting with automated systems for businesses.',
+ {f:'biz',r:['epic','Epic'],t:'PT Anoran Technology',who:'Founder · B2B automation',url:'https://anoran.id',
+  sum:'My own company: an admin assistant that lives in Telegram & WhatsApp for small businesses · it reads chat and receipt photos, books the numbers, and sends reports automatically (daily recaps, margin, debt reminders). Try it at <a href="https://anoran.id" target="_blank" rel="noopener">anoran.id</a>.',
   wins:['2 enterprise clients'],
-  log:{Problem:'Clients with many stores were collecting sales numbers and checking competitors by hand every day.',Built:['Automated daily multi-store reporting','Automated competitor analysis'],Result:'Signed 2 large enterprise clients who now run their daily operations on these systems.'},
+  log:{Problem:'Clients with many stores were collecting sales numbers and checking competitors by hand every day.',Built:['Automated daily multi-store reporting','Automated competitor analysis'],Result:'Signed 2 large enterprise clients who now run their daily operations on these systems. The product is live at anoran.id.'},
   tags:['Automation','Reporting','B2B']},
  {f:'biz',r:['rare','Rare'],t:'Enterprise ERP with IoT sync',who:'PT Rindang Tigasatu Pratama · Flutter',
   sum:'A Flutter ERP app connected to field hardware: truck weigh bridges and GPS trackers.',
@@ -452,7 +452,7 @@ const PLACES=[
    <div class="classes">
     <div class="cls"><h3>Security Engineer</h3><div class="role">Main class · Bank Mandiri · new, leveling up</div><p>I'm building an Authenticator SDK for the bank's internal apps. Before that I taught myself mobile security by building my own MFA app: Secure Enclave login, certificate pinning, and jailbreak, debugger and Frida detection.</p></div>
     <div class="cls"><h3>iOS Developer</h3><div class="role">3 years · banks and fintech</div><p>Features used by real bank customers: QRIS payments at home and abroad, digital loans, credit cards, and an NFC transit card. Swift, SwiftUI, UIKit, RxSwift, Combine.</p></div>
-    <div class="cls"><h3>Founder</h3><div class="role">PT Anoran Technology</div><p>My own company. We automate daily work for 2 enterprise clients, like multi-store sales reports and competitor tracking, so their teams stop doing it by hand.</p></div>
+    <div class="cls"><h3>Founder</h3><div class="role">PT Anoran Technology</div><p>My own company. We automate daily work for 2 enterprise clients, like multi-store sales reports and competitor tracking, so their teams stop doing it by hand. Live products: <a href="https://anoran.id" target="_blank" rel="noopener">anoran.id</a> · <a href="https://melodissimo.anoran.id" target="_blank" rel="noopener">melodissimo.anoran.id</a></p></div>
    </div>
    <div class="stats">
     <div class="stat"><b>3</b><small>years iOS in finance</small></div>
@@ -465,7 +465,7 @@ const PLACES=[
   body:()=>`<div class="filters" role="group" aria-label="Filter projects">${[['all','All'],['sec','Security'],['bank','Banking apps'],['ios','Apps & awards'],['biz','Business']].map((f,i)=>`<button aria-pressed="${!i}" data-f="${f[0]}">${f[1]}</button>`).join('')}</div>
   <div class="cards">${QUESTS.map(q=>`<article class="qcard ${q.r[0]==='leg'?'legendary':''}" data-f="${q.f}">
    ${q.img?`<img class="shot" src="images/thumbs/${q.img}.webp" alt="${q.t} preview" width="600" height="200" loading="lazy" decoding="async">`:''}
-   <div class="in"><span class="rar ${q.r[0]}">${q.r[1]}</span><h3>${q.t}</h3><div class="meta">${q.who}</div><p>${q.sum}</p>
+   <div class="in"><span class="rar ${q.r[0]}">${q.r[1]}</span><h3>${q.url?`<a href="${q.url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-decoration-color:#8b6cf6">${q.t} ↗</a>`:q.t}</h3><div class="meta">${q.who}</div><p>${q.sum}</p>
    ${q.wins?`<div class="wins">${q.wins.map(w=>`<b>${w}</b>`).join('')}</div>`:''}
    ${q.log?`<details><summary>Read the quest log</summary>${logHtml(q.log)}</details>`:''}
    <div class="tags">${q.tags.map(t=>`<span>${t}</span>`).join('')}</div></div></article>`).join('')}</div>`,
