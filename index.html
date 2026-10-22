@@ -3,585 +3,557 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shasha Island — Portfolio Game</title>
-<meta name="description" content="Explore Shasha's portfolio as a little island adventure. Application Security Engineer, ex-iOS developer, Apple WWDC22 winner.">
+<title>Shasha — Portfolio Quest</title>
+<meta name="description" content="Balqis Shafira Aini (Shasha): Application Security Engineer at Bank Mandiri, 4+ years building iOS banking apps, Apple WWDC22 Swift Student Challenge winner.">
+<meta name="theme-color" content="#8fd6f5">
 <link rel="icon" href="images/favicon.ico">
+<link rel="preload" as="image" href="images/shasha-portrait.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#2b2440;--ink-soft:#5b5372;--paper:#fffaf0;--paper2:#fff3dc;
+  --ink:#2b2440;--soft:#5b5372;--paper:#fffaf0;--paper2:#fff3dc;--line:rgba(43,36,64,.14);
   --pink:#ff7aa8;--purple:#8b6cf6;--blue:#4aa3ff;--orange:#ff9f43;--yellow:#ffd23f;--green:#5cc96b;--teal:#2ec4b6;
-  --grass:#9bd770;--grass2:#8acb5f;--sand:#f4dfa6;--water:#6cc6e8;--water2:#5ab8de;
+  --sky:#c8eefc;
   --head:'Fredoka',system-ui,sans-serif;--body:'Nunito',system-ui,sans-serif;
-  --shadow:0 4px 0 var(--ink);
+  --sh:0 4px 0 var(--ink);--r:18px;
+  --hud:96px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;background:var(--water);font-family:var(--body);color:var(--ink);-webkit-tap-highlight-color:transparent}
-button{font-family:inherit;cursor:pointer}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hud) + 8px)}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;font-size:16px;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+img{display:block;max-width:100%}
 a{color:inherit}
-
-/* ---------- viewport & world ---------- */
-#viewport{position:fixed;inset:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
-#world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;
-  background:
-    radial-gradient(ellipse 60px 8px at 50% 50%,rgba(255,255,255,.35),transparent 70%) 0 0/220px 120px,
-    radial-gradient(ellipse 40px 6px at 50% 50%,rgba(255,255,255,.25),transparent 70%) 110px 60px/220px 120px,
-    var(--water);
-  animation:waves 6s linear infinite}
-@keyframes waves{to{background-position:220px 0,330px 60px,0 0}}
-.island{position:absolute;border-radius:220px;background:var(--sand);box-shadow:0 0 0 14px rgba(255,255,255,.45),0 0 0 30px rgba(255,255,255,.15)}
-.island::after{content:'';position:absolute;inset:34px;border-radius:190px;
-  background:radial-gradient(circle at 20% 30%,var(--grass2) 0 2px,transparent 3px) 0 0/46px 46px,
-             radial-gradient(circle at 70% 80%,var(--grass2) 0 2px,transparent 3px) 0 0/58px 58px,var(--grass)}
-svg.paths{position:absolute;left:0;top:0;pointer-events:none;z-index:1}
-.pond{position:absolute;border-radius:50%;background:var(--water);box-shadow:inset 0 6px 0 rgba(0,0,0,.08),0 0 0 8px var(--sand);z-index:2}
-.pond::after{content:'';position:absolute;left:30%;top:35%;width:40px;height:6px;border-radius:6px;background:rgba(255,255,255,.55)}
-.flower{position:absolute;width:8px;height:8px;border-radius:50%;z-index:2;box-shadow:0 0 0 3px rgba(255,255,255,.75)}
-
-/* entities share depth sorting through z-index set in JS */
-.ent{position:absolute}
-
-/* trees */
-.tree{width:84px;height:104px;pointer-events:none}
-.tree .crown{position:absolute;left:0;top:0;width:84px;height:76px;border-radius:50%;background:#4fae4f;box-shadow:inset -10px -10px 0 #3f9443,0 4px 0 rgba(0,0,0,.12)}
-.tree .crown::before{content:'';position:absolute;left:14px;top:10px;width:26px;height:18px;border-radius:50%;background:rgba(255,255,255,.22)}
-.tree .trunk{position:absolute;left:34px;top:64px;width:16px;height:36px;background:#9b6a43;border-radius:4px}
-.tree.pine .crown{border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:#3f9e6a;box-shadow:inset -10px -10px 0 #328457}
-.tree.blossom .crown{background:#ffb3cf;box-shadow:inset -10px -10px 0 #f58fb5}
-.tree::after{content:'';position:absolute;left:18px;bottom:-6px;width:48px;height:12px;border-radius:50%;background:rgba(0,0,0,.14);z-index:-1}
-
-/* buildings */
-.bld{cursor:pointer}
-.bld .roof{position:absolute;left:-8%;width:116%;top:0;background:var(--roof);clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 4px 0 rgba(0,0,0,.15))}
-.bld .roof::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 3px,transparent 3px 16px)}
-.bld .wall{position:absolute;left:0;right:0;bottom:0;background:var(--wall);border-radius:6px 6px 4px 4px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 6px 0 rgba(0,0,0,.12)}
-.bld .win{position:absolute;width:34px;height:30px;background:#bfe9ff;border:5px solid #fff;border-radius:6px;box-shadow:inset 0 -8px 0 rgba(74,163,255,.25)}
-.bld .door{position:absolute;bottom:0;left:50%;width:44px;height:58px;margin-left:-22px;background:var(--door,#8a5a3b);border-radius:22px 22px 0 0;box-shadow:inset -6px 0 0 rgba(0,0,0,.15)}
-.bld .door::after{content:'';position:absolute;right:9px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--yellow)}
-.bld .label{position:absolute;left:50%;bottom:-46px;transform:translateX(-50%);white-space:nowrap;font-family:var(--head);font-weight:600;font-size:17px;
-  background:var(--paper);border:3px solid var(--ink);border-radius:12px;padding:3px 12px;box-shadow:0 3px 0 var(--ink)}
-.bld .prompt{position:absolute;left:50%;top:-58px;transform:translate(-50%,8px);white-space:nowrap;font-family:var(--head);font-weight:600;font-size:15px;
-  background:var(--ink);color:#fff;border-radius:12px;padding:6px 14px;opacity:0;transition:.2s;pointer-events:none}
-.bld .prompt::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink)}
-.bld.near .prompt{opacity:1;transform:translate(-50%,0);animation:bob 1s ease-in-out infinite}
-.bld .chk{position:absolute;right:-14px;top:18%;width:38px;height:38px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:none;place-items:center;font-family:var(--head);font-weight:700;font-size:20px;box-shadow:0 3px 0 var(--ink)}
-.bld.done .chk{display:grid;animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
-.bld:hover .label{background:var(--yellow)}
-/* statue */
-.statue .ped{position:absolute;left:10%;right:10%;bottom:0;height:46%;background:#c9c3d6;border-radius:8px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.1),0 6px 0 rgba(0,0,0,.12)}
-.statue .ped::before{content:'WWDC22';position:absolute;inset:auto 0 18px;text-align:center;font-family:var(--head);font-weight:700;font-size:15px;color:var(--ink-soft)}
-.statue .star{position:absolute;left:50%;top:0;width:96px;height:92px;margin-left:-48px;background:var(--yellow);
-  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:shine 2.4s ease-in-out infinite}
-@keyframes shine{50%{transform:translateY(-6px) rotate(6deg);filter:brightness(1.15)}}
-
-/* sign */
-.sign{pointer-events:none}
-.sign .board{position:absolute;left:0;top:0;width:100%;background:#d9a066;border:3px solid #8a5a3b;border-radius:8px;padding:8px 10px;font-family:var(--head);font-weight:600;font-size:14px;line-height:1.25;text-align:center;color:#4a2f1b;box-shadow:0 4px 0 rgba(0,0,0,.15)}
-.sign .post{position:absolute;left:50%;bottom:0;width:10px;margin-left:-5px;height:30px;background:#8a5a3b;border-radius:3px}
-
-/* chests */
-.chest{width:46px;height:38px;cursor:pointer}
-.chest .base{position:absolute;left:0;right:0;bottom:0;height:24px;background:#c07a3c;border:3px solid var(--ink);border-radius:0 0 6px 6px}
-.chest .lid{position:absolute;left:0;right:0;top:0;height:18px;background:#d98f4a;border:3px solid var(--ink);border-radius:12px 12px 2px 2px;transform-origin:50% 100%;transition:transform .35s}
-.chest .lock{position:absolute;left:50%;top:12px;width:12px;height:12px;margin-left:-6px;background:var(--yellow);border:2px solid var(--ink);border-radius:3px;z-index:2}
-.chest:not(.open){animation:bob 1.6s ease-in-out infinite}
-.chest.open .lid{transform:translateY(-6px) rotate(-28deg)}
-.chest.open .lock{opacity:0}
-.chest.open::after{content:'';position:absolute;left:8px;top:-8px;width:30px;height:20px;border-radius:50%;background:radial-gradient(var(--yellow),transparent 70%);animation:glow 1s ease-out forwards}
-@keyframes glow{from{transform:scale(.4);opacity:1}to{transform:scale(2.4) translateY(-14px);opacity:0}}
-
-/* player */
-.player{width:56px;height:84px;pointer-events:none}
-.player .shadow{position:absolute;left:8px;bottom:-5px;width:40px;height:12px;border-radius:50%;background:rgba(0,0,0,.18)}
-.player .rig{position:absolute;inset:0;transform-origin:50% 100%}
-.player.flip .rig{transform:scaleX(-1)}
-.player .legs{position:absolute;left:17px;bottom:0;width:22px;height:16px}
-.player .legs i{position:absolute;bottom:0;width:9px;height:16px;background:#2b2440;border-radius:4px}
-.player .legs i:first-child{left:0}.player .legs i:last-child{right:0}
-.player .torso{position:absolute;left:10px;bottom:13px;width:36px;height:32px;background:#7184b8;border-radius:12px 12px 8px 8px;box-shadow:inset -5px -4px 0 rgba(0,0,0,.12)}
-.player .torso::after{content:'';position:absolute;right:6px;top:8px;width:8px;height:8px;background:var(--orange);border-radius:2px}
-.player .head{position:absolute;left:3px;top:0;width:50px;height:50px;border-radius:50%;border:3px solid var(--ink);background:#2b2440 url(images/shasha-face.jpg) center/cover;box-shadow:0 3px 0 rgba(0,0,0,.18)}
-.player.walk .rig{animation:hop .36s ease-in-out infinite}
-.player.walk .legs i:first-child{animation:step .36s ease-in-out infinite}
-.player.walk .legs i:last-child{animation:step .36s ease-in-out infinite reverse}
-@keyframes hop{50%{transform:translateY(-4px)}}
-.player.flip.walk .rig{animation-name:hopf}
-@keyframes hopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-4px)}}
-@keyframes step{50%{transform:translateY(-4px)}}
-.tapmark{position:absolute;width:30px;height:14px;margin:-7px 0 0 -15px;border:3px solid #fff;border-radius:50%;z-index:3;pointer-events:none;animation:tap .5s ease-out forwards}
-@keyframes tap{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
-
-@keyframes bob{50%{transform:translate(-50%,-5px)}}
-.chest:not(.open){animation-name:bobc}
-@keyframes bobc{50%{transform:translateY(-4px)}}
-@keyframes pop{from{transform:scale(0)}}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+.wrap{width:min(1080px,100%);margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:600;font-size:18px;padding:12px 22px;border:3px solid var(--ink);border-radius:16px;box-shadow:var(--sh);background:#fff;text-decoration:none;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.go{background:var(--green);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.y{background:var(--yellow)}
 
 /* ---------- HUD ---------- */
-.hud{position:fixed;z-index:50;pointer-events:none}
-.hud>*{pointer-events:auto}
-#hud-top{top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
-.panel{background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--shadow)}
-.who{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px}
-.who img{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);object-fit:cover}
-.who b{font-family:var(--head);font-size:18px;display:block;line-height:1.1}
-.who small{font-size:12px;color:var(--ink-soft);font-weight:700}
-.prog{padding:8px 14px;min-width:200px}
-.prog .row{display:flex;justify-content:space-between;font-size:13px;font-weight:800;margin-bottom:4px}
-.prog .bar{height:12px;border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
-.prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));transition:width .5s}
-.prog .chests{font-size:12px;font-weight:700;color:var(--ink-soft);margin-top:4px}
-.hbtn{font-family:var(--head);font-weight:600;font-size:16px;padding:10px 16px;background:var(--yellow);border:3px solid var(--ink);border-radius:14px;box-shadow:var(--shadow);transition:transform .1s}
-.hbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
-.hbtn.alt{background:#fff}
-.right{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.left{display:flex;flex-direction:column;gap:8px}
-#hint{bottom:max(14px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);font-weight:800;font-size:13px;padding:8px 16px;text-align:center;max-width:calc(100% - 24px)}
-#toast{position:fixed;left:50%;top:96px;transform:translate(-50%,-20px);z-index:80;opacity:0;transition:.3s;pointer-events:none;padding:12px 18px;max-width:min(420px,calc(100% - 32px));text-align:center}
-#toast.on{opacity:1;transform:translate(-50%,0)}
-#toast b{font-family:var(--head);font-size:18px;display:block;color:var(--orange)}
-#toast span{font-weight:700;font-size:14px}
+.hud{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(255,250,240,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:3px solid var(--ink);padding-top:env(safe-area-inset-top)}
+.hud-row{display:flex;align-items:center;gap:12px;height:52px}
+.me{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.me img{width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);object-fit:cover;flex:none}
+.me b{font-family:var(--head);font-size:18px;line-height:1;display:block}
+.me small{font-size:12px;font-weight:800;color:var(--soft);white-space:nowrap}
+.xp{flex:1;max-width:260px;margin-left:auto}
+.xp .lb{display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--soft)}
+.xp .bar{height:10px;border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
+.xp .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow))}
+.loot{font-family:var(--head);font-weight:600;font-size:15px;display:flex;align-items:center;gap:6px;padding:4px 10px;border:2px solid var(--ink);border-radius:12px;background:var(--paper2);white-space:nowrap}
+.loot .mini{width:18px;height:14px;background:#c07a3c;border:2px solid var(--ink);border-radius:5px 5px 3px 3px}
+/* map track */
+.track{position:relative;height:40px;margin:0 6px}
+.track::before{content:'';position:absolute;left:14px;right:14px;top:50%;height:6px;margin-top:-3px;border-radius:6px;background:repeating-linear-gradient(90deg,#e7c98a 0 10px,transparent 10px 16px)}
+.stops{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center}
+.stop{position:relative;width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);background:#fff;font-family:var(--head);font-weight:700;font-size:13px;display:grid;place-items:center;transition:background .3s,transform .2s}
+.stop:hover{transform:scale(1.12)}
+.stop.done{background:var(--c)}
+.stop span{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;white-space:nowrap;font-family:var(--body);color:var(--soft);display:none}
+.walker{position:absolute;top:-4px;left:0;width:28px;height:28px;margin-left:0;border-radius:50%;border:3px solid var(--ink);background:url(images/shasha-face.jpg) center/cover;box-shadow:0 3px 0 rgba(0,0,0,.2);pointer-events:none;will-change:transform;z-index:2}
+.walker.walk{animation:hop .3s ease-in-out infinite}
+@keyframes hop{50%{margin-top:-5px}}
 
-/* ---------- modal ---------- */
-.modal{position:fixed;inset:0;z-index:90;background:rgba(43,36,64,.45);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal.on{opacity:1;pointer-events:auto}
-.sheet{position:relative;width:min(760px,100%);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;background:var(--paper);border:4px solid var(--ink);border-radius:24px;box-shadow:0 8px 0 var(--ink);transform:translateY(24px) scale(.97);transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
-.modal.on .sheet{transform:none}
-.sheet-head{padding:24px 28px 18px;border-bottom:3px dashed rgba(43,36,64,.18);background:var(--tone,var(--yellow));border-radius:20px 20px 0 0}
-.sheet-head .kicker{font-weight:800;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:.75}
-.sheet-head h2{font-family:var(--head);font-size:clamp(26px,5vw,34px);line-height:1.1;margin-top:4px}
-.sheet-head p{font-weight:700;margin-top:6px;opacity:.85}
-.sheet-body{padding:22px 28px 28px;font-size:15.5px;line-height:1.65}
-.x{position:absolute;right:14px;top:14px;width:42px;height:42px;border-radius:50%;background:#fff;border:3px solid var(--ink);font-size:20px;font-weight:800;line-height:1;box-shadow:0 3px 0 var(--ink)}
-.sheet-body p{margin-bottom:12px}
-.sheet-body b{color:#000}
-.about{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
-.polaroid{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px 8px 34px;transform:rotate(-3deg);box-shadow:0 4px 0 var(--ink);position:relative}
-.polaroid img{width:100%;display:block;border-radius:6px;aspect-ratio:3/4;object-fit:cover;object-position:50% 20%}
-.polaroid span{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--head);font-weight:600}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+/* ---------- hero ---------- */
+.hero{padding:calc(var(--hud) + 40px) 0 70px;background:linear-gradient(#8fd6f5,var(--sky) 70%,var(--paper));position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;left:-10%;right:-10%;bottom:-60px;height:120px;border-radius:50%;background:var(--paper)}
+.cloud{position:absolute;height:34px;border-radius:40px;background:#fff;opacity:.85;animation:drift linear infinite}
+.cloud::before{content:'';position:absolute;left:22%;top:-18px;width:46%;height:44px;border-radius:50%;background:#fff}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(130vw)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:40px;align-items:center}
+.kick{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--purple)}
+h1{font-family:var(--head);font-size:clamp(40px,8vw,72px);line-height:1;margin:8px 0 6px}
+h1 em{font-style:normal;color:var(--pink)}
+.fullname{font-weight:800;color:var(--soft)}
+.pitch{font-size:clamp(17px,2.2vw,20px);margin:16px 0 22px;max-width:560px}
+.pitch b{background:linear-gradient(transparent 60%,rgba(255,210,63,.7) 60%)}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.card{position:relative}
+.card .frame{background:#fff;border:4px solid var(--ink);border-radius:26px;box-shadow:0 8px 0 var(--ink);padding:10px;transform:rotate(2deg)}
+.card img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:50% 12%;border-radius:18px;background:#eee}
+.card .tag{position:absolute;left:-12px;bottom:28px;background:var(--pink);color:#fff;font-family:var(--head);font-weight:600;padding:6px 14px;border:3px solid var(--ink);border-radius:12px;transform:rotate(-6deg)}
+.card .lvl{position:absolute;right:-10px;top:18px;background:var(--yellow);font-family:var(--head);font-weight:700;padding:4px 12px;border:3px solid var(--ink);border-radius:12px;transform:rotate(5deg)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px}
+.stat{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:12px 8px;text-align:center;box-shadow:0 3px 0 var(--ink)}
+.stat b{font-family:var(--head);font-size:28px;line-height:1.1;display:block;color:var(--purple)}
+.stat small{font-weight:800;font-size:12px;color:var(--soft);line-height:1.3;display:block}
+
+/* ---------- stages ---------- */
+section.stage{padding:64px 0}
+section.stage:nth-of-type(even){background:var(--paper2)}
+.st-head{display:flex;align-items:flex-end;gap:16px;margin-bottom:26px}
+.badge{flex:none;width:62px;height:62px;border-radius:18px;background:var(--c);border:3px solid var(--ink);box-shadow:var(--sh);display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:700;line-height:1}
+.badge small{display:block;font-size:10px;letter-spacing:1px}
+.badge b{font-size:26px}
+h2{font-family:var(--head);font-size:clamp(28px,5vw,40px);line-height:1.1}
+.st-head p{font-weight:700;color:var(--soft);margin-top:2px}
+.lead{font-size:17px;max-width:760px;margin-bottom:24px}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.box{background:#fff;border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--sh)}
+
+/* about */
+.classes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cls{padding:20px}
+.cls .ico{width:46px;height:46px;border-radius:14px;border:3px solid var(--ink);background:var(--c);display:grid;place-items:center;margin-bottom:10px}
+.cls .ico svg{width:24px;height:24px}
+.cls h3{font-family:var(--head);font-size:21px;line-height:1.2}
+.cls .role{font-size:13px;font-weight:800;color:var(--purple);margin-bottom:6px}
+.cls p{font-size:15px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;align-items:center}
 .chip{font-size:13px;font-weight:800;padding:5px 12px;border:2px solid var(--ink);border-radius:999px;background:#fff}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
-.stat{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px 8px;text-align:center}
-.stat b{font-family:var(--head);font-size:26px;display:block;color:var(--purple)}
-.stat small{font-weight:700;font-size:12px;color:var(--ink-soft)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.qcard{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:16px;box-shadow:0 4px 0 var(--ink)}
-.qcard h3{font-family:var(--head);font-size:20px;margin:6px 0 2px}
-.qcard .meta{font-size:12.5px;font-weight:800;color:var(--ink-soft);margin-bottom:8px}
-.qcard p{font-size:14px;margin:0}
-.rar{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
-.rar.leg{background:var(--yellow)}.rar.epic{background:#d9cbff}.rar.rare{background:#bfe3ff}
-.qcard.legendary{background:linear-gradient(160deg,#fff7d1,#fff)}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.tags span{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--paper2);border:2px solid rgba(43,36,64,.2)}
-.chapters{display:flex;flex-direction:column;gap:12px}
-.ch{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px}
-.ch .lv{width:64px;height:64px;border-radius:14px;background:var(--blue);color:#fff;border:3px solid var(--ink);display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:700;line-height:1}
-.ch .lv small{display:block;font-size:11px;font-weight:600}
-.ch .lv b{font-size:24px}
-.ch.now .lv{background:var(--pink)}
-.ch .when{font-size:12px;font-weight:800;color:var(--ink-soft);letter-spacing:.5px;text-transform:uppercase}
-.ch h3{font-family:var(--head);font-size:19px;line-height:1.2;margin:2px 0}
-.ch .org{font-weight:800;color:var(--purple);font-size:14px}
-.ch ul{margin:6px 0 0 18px;font-size:14px}
-.sheet-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.skillbox{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:16px}
-.skillbox h4{font-family:var(--head);font-size:18px;margin-bottom:10px}
+
+/* quests */
+.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 8px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{flex:none;font-weight:800;font-size:14px;padding:7px 16px;border:2px solid var(--ink);border-radius:999px;background:#fff}
+.filters button[aria-pressed=true]{background:var(--ink);color:#fff}
+.quests{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.q{display:flex;flex-direction:column;overflow:hidden}
+.q[hidden]{display:none}
+.q .shot{aspect-ratio:3/1;object-fit:cover;width:100%;height:auto;border-bottom:3px solid var(--ink);background:var(--paper2)}
+.q .in{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
+.q .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rar{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
+.rar.leg{background:var(--yellow)}.rar.epic{background:#d9cbff}.rar.rare{background:#bfe3ff}.rar.com{background:#e8e4ef}
+.q .kind{font-size:12px;font-weight:800;color:var(--soft)}
+.q h3{font-family:var(--head);font-size:22px;line-height:1.2;margin:8px 0 2px}
+.q .who{font-size:13px;font-weight:800;color:var(--purple);margin-bottom:6px}
+.q .sum{font-size:15px}
+.q.legendary{background:linear-gradient(170deg,#fff7d1,#fff 55%)}
+.wins{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.wins b{font-family:var(--head);font-weight:600;font-size:14px;padding:3px 10px;border-radius:10px;background:#dff7e3;border:2px solid var(--ink)}
+details{margin-top:12px;border-top:2px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:800;font-size:14px;color:var(--purple);list-style:none;display:flex;align-items:center;gap:6px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border:2px solid var(--purple);border-radius:6px;font-size:14px;line-height:1}
+details[open] summary::before{content:'−'}
+.log{font-size:14.5px;margin-top:8px}
+.log dt{font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--soft);margin-top:8px}
+.log dd{margin:0}
+.log ul{margin:2px 0 0 18px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:12px}
+.tags span{font-size:12px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--paper2);border:2px solid var(--line)}
+
+/* journey */
+.levels{position:relative;display:grid;gap:14px;padding-left:34px}
+.levels::before{content:'';position:absolute;left:13px;top:10px;bottom:10px;width:6px;border-radius:6px;background:repeating-linear-gradient(#e7c98a 0 12px,transparent 12px 20px)}
+.lv{position:relative;padding:16px 18px}
+.lv::before{content:attr(data-n);position:absolute;left:-40px;top:16px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:15px}
+.lv.now::before{background:var(--pink)}
+.lv .when{font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--soft)}
+.lv .now-pill{background:var(--pink);color:#fff;border-radius:999px;padding:1px 8px;margin-left:6px}
+.lv h3{font-family:var(--head);font-size:20px;line-height:1.25;margin:2px 0}
+.lv .org{font-weight:800;color:var(--purple);font-size:14px}
+.lv p{font-size:15px;margin-top:6px}
+.lv ul{margin:6px 0 0 18px;font-size:14.5px}
+
+/* skills */
+.sheet{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sk{padding:18px}
+.sk h3{font-family:var(--head);font-size:20px;margin-bottom:4px}
+.sk>p{font-size:13.5px;color:var(--soft);font-weight:700;margin-bottom:12px;line-height:1.45}
 .sb{margin-bottom:10px}
-.sb .lb{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700}
-.sb .tr{height:12px;border:2px solid var(--ink);border-radius:8px;background:var(--paper2);overflow:hidden;margin-top:3px}
-.sb .tr i{display:block;height:100%;width:0;background:var(--c,var(--orange));transition:width 1s cubic-bezier(.2,.8,.2,1)}
-.classcard{display:flex;gap:14px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px;margin-bottom:16px}
-.classcard img{width:64px;height:64px;border-radius:50%;border:3px solid var(--ink);object-fit:cover}
-.classcard b{font-family:var(--head);font-size:20px;display:block}
+.sb .l{display:flex;justify-content:space-between;font-size:14px;font-weight:700}
+.sb .t{height:12px;border:2px solid var(--ink);border-radius:8px;background:var(--paper2);overflow:hidden;margin-top:3px}
+.sb .t i{display:block;height:100%;width:0;background:var(--c);transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.tools{margin-top:18px;padding:16px 18px}
+.tools b{font-family:var(--head);font-size:17px;display:block;margin-bottom:8px}
+
+/* trophies */
+.trophies{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.tr{display:flex;gap:16px;align-items:flex-start;padding:18px}
+.medal{flex:none;width:56px;height:56px;border-radius:50%;background:#ddd;border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:22px;transition:background .4s,transform .5s cubic-bezier(.3,1.6,.5,1);transform:scale(.6) rotate(-30deg)}
+.tr.in .medal{background:var(--yellow);transform:none}
+.tr h3{font-family:var(--head);font-size:19px;line-height:1.25}
+.tr p{font-size:14.5px;margin-top:4px}
+
+/* contact */
+.final{padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;background:linear-gradient(160deg,#fff,#e6fbf8)}
+.final h3{font-family:var(--head);font-size:clamp(24px,4vw,32px);line-height:1.15}
+.final p{margin:10px 0 16px}
 .links{display:grid;gap:10px}
-.link{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:14px 16px;text-decoration:none;font-weight:800;box-shadow:0 4px 0 var(--ink);transition:transform .1s}
+.link{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px 16px;text-decoration:none;font-weight:800;box-shadow:0 3px 0 var(--ink);transition:background .15s}
 .link:hover{background:var(--yellow)}
-.link:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
-.link small{font-weight:700;color:var(--ink-soft);word-break:break-all;text-align:right}
-.status{margin-top:16px;background:#dff7e3;border:3px solid var(--ink);border-radius:14px;padding:12px 16px;font-weight:800}
-.fame{display:grid;gap:12px}
-.fame .item{display:flex;gap:14px;align-items:flex-start;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px}
-.medal{flex:none;width:48px;height:48px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:18px}
-.fame h3{font-family:var(--head);font-size:18px}
-.fame p{margin:2px 0 0;font-size:14px}
-.travel{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.travel button{display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:12px;box-shadow:0 4px 0 var(--ink);font-size:14px;font-weight:700;color:var(--ink)}
-.travel button:hover{background:var(--paper2)}
-.travel button .dot{flex:none;width:40px;height:40px;border-radius:12px;border:3px solid var(--ink);background:var(--c);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:18px}
-.travel button b{font-family:var(--head);font-size:17px;display:block}
-.travel button.done .dot::after{content:'\2713'}
+.link small{font-weight:700;color:var(--soft);overflow-wrap:anywhere;text-align:right}
+.status{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;padding:6px 12px;border:2px solid var(--ink);border-radius:999px;background:#dff7e3}
+.status i{width:10px;height:10px;border-radius:50%;background:var(--green);animation:ping 1.6s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(92,201,107,.7)}100%{box-shadow:0 0 0 10px rgba(92,201,107,0)}}
+footer{text-align:center;padding:30px 20px calc(30px + env(safe-area-inset-bottom));font-weight:700;color:var(--soft);font-size:14px}
 
-/* ---------- title screen ---------- */
-#title{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:radial-gradient(circle at 50% 120%,#bfeaff 0 30%,transparent 31%),linear-gradient(#8fd6f5,#c8eefc);transition:opacity .5s,visibility .5s;overflow:auto}
-#title.gone{opacity:0;visibility:hidden}
-.tcard{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:center;width:min(780px,100%);background:var(--paper);border:4px solid var(--ink);border-radius:28px;box-shadow:0 10px 0 var(--ink);padding:26px}
-.tcard .pic{position:relative}
-.tcard .pic img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 20%;border-radius:18px;border:4px solid var(--ink);background:#eee}
-.tcard .pic .tag{position:absolute;left:-10px;bottom:16px;background:var(--pink);color:#fff;font-family:var(--head);font-weight:600;padding:6px 14px;border:3px solid var(--ink);border-radius:12px;transform:rotate(-5deg)}
-.tcard .k{font-weight:800;letter-spacing:2px;font-size:12px;text-transform:uppercase;color:var(--purple)}
-.tcard h1{font-family:var(--head);font-size:clamp(38px,7vw,60px);line-height:1;margin:6px 0 6px}
-.tcard h1 span{color:var(--pink)}
-.tcard .full{font-weight:800;color:var(--ink-soft);margin-bottom:12px}
-.tcard p{line-height:1.6;margin-bottom:18px}
-.how{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.how span{font-size:13px;font-weight:800;padding:5px 12px;border-radius:999px;background:var(--paper2);border:2px solid rgba(43,36,64,.25)}
-.big{font-family:var(--head);font-weight:700;font-size:22px;padding:14px 28px;background:var(--green);color:#fff;border:4px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 var(--ink);text-shadow:0 2px 0 rgba(0,0,0,.2)}
-.big:hover{filter:brightness(1.06)}
-.big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
-.skip{margin-left:14px;font-weight:800;background:none;border:0;text-decoration:underline;color:var(--ink-soft);font-size:15px}
+/* chests */
+.chest{position:relative;display:inline-flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border:2px dashed var(--soft);border-radius:14px;font-weight:800;font-size:13px;color:var(--soft);background:rgba(255,255,255,.6)}
+.chest .c{position:relative;width:34px;height:28px;flex:none}
+.chest .c::before{content:'';position:absolute;left:0;right:0;bottom:0;height:17px;background:#c07a3c;border:3px solid var(--ink);border-radius:0 0 5px 5px}
+.chest .c::after{content:'';position:absolute;left:0;right:0;top:0;height:14px;background:#d98f4a;border:3px solid var(--ink);border-radius:10px 10px 2px 2px;transform-origin:10% 100%;transition:transform .35s}
+.chest:not(.open) .c{animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.chest.open{border-style:solid;border-color:var(--ink);color:var(--ink);background:#fff7d1;cursor:default}
+.chest.open .c::after{transform:rotate(-35deg) translateY(-3px)}
+.chest-row{margin-top:20px}
 
-/* confetti */
-.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:95;pointer-events:none;animation:fall linear forwards}
+/* toast + confetti */
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));z-index:80;transform:translate(-50%,24px);opacity:0;transition:.3s;pointer-events:none;padding:12px 18px;width:max-content;max-width:calc(100% - 32px);text-align:center;background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--sh)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast b{font-family:var(--head);font-size:18px;display:block;color:var(--orange);line-height:1.2}
+#toast span{font-weight:700;font-size:14px}
+.conf{position:fixed;top:-20px;width:9px;height:14px;z-index:95;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 
-@media (max-width:700px){
-  .tcard{grid-template-columns:1fr;text-align:center;padding:20px}
-  .tcard .pic{width:170px;margin:0 auto}
-  .how{justify-content:center}
-  .skip{display:block;margin:12px auto 0}
-  .about{grid-template-columns:1fr}
-  .polaroid{width:180px;margin:0 auto}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .sheet-head{padding:20px 60px 16px 20px}
-  .sheet-body{padding:18px 18px 22px}
-  .who small,.prog .chests{display:none}
-  .who{padding:6px 10px 6px 6px}.who img{width:36px;height:36px}.who b{font-size:16px}
-  .prog{min-width:0;padding:6px 10px}
-  .hbtn{font-size:14px;padding:8px 12px}
-  #hint{font-size:12px}
+@media (min-width:900px){.stop span{display:block}.track{height:48px;margin-bottom:8px}:root{--hud:112px}}
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .card{width:min(200px,58%);margin:0 auto;order:-1}
+  .hero-text{text-align:center}
+  .pitch{margin-left:auto;margin-right:auto}
+  .cta{justify-content:center}
+  .classes,.sheet{grid-template-columns:1fr}
+  .trophies{grid-template-columns:1fr}
+  .final{grid-template-columns:1fr;padding:22px}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){
+  body{font-size:15.5px}
+  .wrap{padding:0 16px}
+  .hero{padding-top:calc(var(--hud) + 24px)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .me small{display:none}
+  .xp{max-width:none}
+  section.stage{padding:48px 0}
+  .st-head{gap:12px}.badge{width:52px;height:52px}.badge b{font-size:22px}
+  .quests{grid-template-columns:1fr}
+  .btn{font-size:17px;padding:11px 18px}
+  .link{flex-direction:column;align-items:flex-start;gap:0}.link small{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
-<!-- TITLE SCREEN -->
-<div id="title">
-  <div class="tcard">
-    <div class="pic"><img src="balqis.jpg" alt="Shasha"><div class="tag">Player 1</div></div>
-    <div>
-      <div class="k">A tiny portfolio adventure</div>
-      <h1>Welcome to <span>Shasha</span> Island</h1>
-      <div class="full">Balqis Shafira Aini · Application Security Engineer</div>
-      <p>Walk around the island and step into each building to discover my story, projects, career journey, and skills. Find all 6 places and open the hidden treasure chests.</p>
-      <div class="how"><span>Arrow keys / WASD to walk</span><span>Tap anywhere to move</span><span>E or Enter to go inside</span></div>
-      <button class="big" id="start">Start exploring</button>
-      <button class="skip" id="skip">Skip the game, show me the menu</button>
+<header class="hud">
+  <div class="wrap">
+    <div class="hud-row">
+      <a class="me" href="#top"><img src="images/shasha-face.jpg" alt="" width="38" height="38"><span><b>Shasha</b><small>Lv.7 AppSec Engineer</small></span></a>
+      <div class="xp" aria-hidden="true"><div class="lb"><span>Explored</span><span id="xp-t">0%</span></div><div class="bar"><i id="xp"></i></div></div>
+      <div class="loot" title="Hidden treasure chests found"><span class="mini"></span><span id="loot">0/4</span></div>
+    </div>
+    <nav class="track" aria-label="Stages">
+      <div class="stops" id="stops"></div>
+      <div class="walker" id="walker"></div>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- HERO / TITLE SCREEN -->
+<section class="hero" id="top">
+  <div class="cloud" style="top:18%;width:120px;animation-duration:70s;animation-delay:-20s"></div>
+  <div class="cloud" style="top:42%;width:90px;animation-duration:90s;animation-delay:-60s"></div>
+  <div class="cloud" style="top:70%;width:140px;animation-duration:110s;animation-delay:-5s"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="kick">Player 1 · Portfolio Quest</div>
+        <h1>Hi, I'm <em>Shasha</em></h1>
+        <div class="fullname">Balqis Shafira Aini</div>
+        <p class="pitch">I keep banking apps safe. I'm an <b>Application Security Engineer at Bank Mandiri</b>, and before that I spent <b>4+ years building iOS apps</b> for LINE Bank, Bank Jakarta and Pegadaian. I also won Apple's <b>WWDC22 Swift Student Challenge</b>.</p>
+        <div class="cta">
+          <a class="btn go" href="#about">Press start</a>
+          <a class="btn" href="#contact">Skip to contact</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="frame"><img src="images/shasha-portrait.webp" alt="Portrait of Shasha" width="600" height="800" fetchpriority="high"></div>
+        <div class="tag">Player 1</div>
+        <div class="lvl">Lv.7</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><b data-count="4" data-suf="+">0</b><small>years building iOS banking apps</small></div>
+      <div class="stat reveal"><b data-count="70" data-pre="−" data-suf="%">0</b><small>transaction time on LINE Bank QRIS overseas</small></div>
+      <div class="stat reveal"><b data-count="2">0</b><small>enterprise clients at my own company</small></div>
+      <div class="stat reveal"><b data-count="9">0</b><small>intellectual property (HAKI) filings</small></div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- GAME -->
-<div id="viewport" aria-label="Island map"><div id="world"></div></div>
-
-<div class="hud" id="hud-top">
-  <div class="left">
-    <div class="panel who"><img src="images/shasha-face.jpg" alt=""><div><b>Shasha</b><small>AppSec Engineer · Bank Mandiri</small></div></div>
-  </div>
-  <div class="right">
-    <div class="panel prog">
-      <div class="row"><span>Places found</span><span id="p-cnt">0/6</span></div>
-      <div class="bar"><i id="p-bar"></i></div>
-      <div class="chests">Treasure chests: <span id="c-cnt">0/4</span></div>
+<!-- STAGE 1 -->
+<section class="stage" id="about" data-name="About" data-c="#ffc4d8">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#ffc4d8"><div><small>STAGE</small><b>1</b></div></div><div><h2>Choose my class</h2><p>What I actually do, in plain words.</p></div></div>
+    <p class="lead reveal">I started as an iOS developer making financial apps, learned how attackers break them, and now work on the defense side. I'm also a founder, building automation tools for businesses. That gives me three classes:</p>
+    <div class="classes">
+      <article class="box cls reveal">
+        <div class="ico" style="--c:#ffc4d8"><svg viewBox="0 0 24 24" fill="none" stroke="#2b2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Security Engineer</h3><div class="role">Main class · Bank Mandiri</div>
+        <p>I check banking apps for weaknesses and harden them before attackers find them: hardware-backed login with the Secure Enclave, certificate pinning, and detecting jailbreaks, debuggers and Frida hooking.</p>
+      </article>
+      <article class="box cls reveal">
+        <div class="ico" style="--c:#bfe3ff"><svg viewBox="0 0 24 24" fill="none" stroke="#2b2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></div>
+        <h3>iOS Developer</h3><div class="role">4+ years · banks and fintech</div>
+        <p>I've shipped features used by real bank customers: QRIS payments at home and abroad, digital loans, credit cards, and an NFC transit card. I work in Swift, SwiftUI, UIKit, RxSwift and Combine.</p>
+      </article>
+      <article class="box cls reveal">
+        <div class="ico" style="--c:#bdf1ea"><svg viewBox="0 0 24 24" fill="none" stroke="#2b2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+        <h3>Founder</h3><div class="role">PT Anoran Technology</div>
+        <p>I run my own small tech company. We automate daily work for businesses, like multi-store sales reports and competitor tracking, so their teams stop doing it by hand.</p>
+      </article>
     </div>
-    <button class="hbtn" id="mapbtn">Island map</button>
+    <div class="facts reveal">
+      <span class="chip">Apple WWDC22 Winner</span><span class="chip">Cargill Global Scholar</span><span class="chip">Summa Cum Laude · GPA 3.94</span><span class="chip">Indonesian &amp; English</span><span class="chip">Open to remote work</span>
+      <button class="chest" data-chest="0"><span class="c"></span><span class="txt">Hidden chest, tap to open</span></button>
+    </div>
   </div>
-</div>
-<div class="hud panel" id="hint">Use arrow keys or WASD to walk · press E to enter</div>
-<div id="toast" class="panel" role="status" aria-live="polite"><b id="toast-t"></b><span id="toast-s"></span></div>
+</section>
 
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
-    <button class="x" id="m-close" aria-label="Close">&times;</button>
-    <div class="sheet-head" id="m-head"><div class="kicker" id="m-kick"></div><h2 id="m-title"></h2><p id="m-sub"></p></div>
-    <div class="sheet-body" id="m-body"></div>
+<!-- STAGE 2 -->
+<section class="stage" id="quests" data-name="Quests" data-c="#d9cbff">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#d9cbff"><div><small>STAGE</small><b>2</b></div></div><div><h2>Quest log</h2><p>Projects I built, what problem they solved, and what happened.</p></div></div>
+    <div class="filters reveal" role="group" aria-label="Filter projects">
+      <button aria-pressed="true" data-f="all">All</button>
+      <button aria-pressed="false" data-f="sec">Security</button>
+      <button aria-pressed="false" data-f="bank">Banking apps</button>
+      <button aria-pressed="false" data-f="ios">Apps &amp; awards</button>
+      <button aria-pressed="false" data-f="biz">Business</button>
+    </div>
+    <div class="quests" id="quests-list"></div>
+    <div class="chest-row reveal"><button class="chest" data-chest="1"><span class="c"></span><span class="txt">Hidden chest, tap to open</span></button></div>
   </div>
-</div>
+</section>
+
+<!-- STAGE 3 -->
+<section class="stage" id="journey" data-name="Journey" data-c="#bfe3ff">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#bfe3ff"><div><small>STAGE</small><b>3</b></div></div><div><h2>Level history</h2><p>Every job leveled me up. Newest first.</p></div></div>
+    <div class="levels" id="levels"></div>
+    <div class="chest-row reveal"><button class="chest" data-chest="2"><span class="c"></span><span class="txt">Hidden chest, tap to open</span></button></div>
+  </div>
+</section>
+
+<!-- STAGE 4 -->
+<section class="stage" id="skills" data-name="Skills" data-c="#ffd9b0">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#ffd9b0"><div><small>STAGE</small><b>4</b></div></div><div><h2>Character sheet</h2><p>Stats after years of training. Bars are self-assessed.</p></div></div>
+    <div class="sheet" id="sheet"></div>
+    <div class="box tools reveal"><b>Inventory</b><div class="facts" style="margin-top:0">
+      <span class="chip">Swift</span><span class="chip">SwiftUI</span><span class="chip">UIKit</span><span class="chip">RxSwift</span><span class="chip">Combine</span><span class="chip">Moya</span><span class="chip">Alamofire</span><span class="chip">SwiftProtobuf</span><span class="chip">CryptoKit / Keychain</span><span class="chip">Vision</span><span class="chip">PencilKit</span><span class="chip">Python / FastAPI</span><span class="chip">Flutter / GetX</span><span class="chip">Figma</span>
+      <button class="chest" data-chest="3"><span class="c"></span><span class="txt">Hidden chest, tap to open</span></button>
+    </div></div>
+  </div>
+</section>
+
+<!-- STAGE 5 -->
+<section class="stage" id="trophies" data-name="Trophies" data-c="#fff0a8">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#fff0a8"><div><small>STAGE</small><b>5</b></div></div><div><h2>Trophy room</h2><p>Medals unlock as you scroll.</p></div></div>
+    <div class="trophies">
+      <div class="box tr reveal"><div class="medal">1</div><div><h3>Apple WWDC22 Swift Student Challenge Winner</h3><p>Apple selected my Swift Playgrounds app, Melodissimo, which teaches the melodica and tells my school's story through code. It was my first SwiftUI project.</p></div></div>
+      <div class="box tr reveal"><div class="medal">2</div><div><h3>Cargill Global Scholar 2022–24</h3><p>Selected as 1 of 10 awardees of Cargill's global program: leadership training, seminars, and one-on-one mentoring with Cargill leaders.</p></div></div>
+      <div class="box tr reveal"><div class="medal">3</div><div><h3>Apple Developer Academy graduate</h3><p>Accepted with a 2.8% acceptance rate. In 10 months I shipped 5 iOS projects, 2 of them on the App Store with 5.0 ratings.</p></div></div>
+      <div class="box tr reveal"><div class="medal">4</div><div><h3>Summa Cum Laude · GPA 3.94 / 4.00</h3><p>Graduated from the University of Lampung.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STAGE 6 -->
+<section class="stage" id="contact" data-name="Contact" data-c="#bdf1ea">
+  <div class="wrap">
+    <div class="st-head reveal"><div class="badge" style="--c:#bdf1ea"><div><small>STAGE</small><b>6</b></div></div><div><h2>Final stage: recruit me</h2><p>Add Shasha to your party.</p></div></div>
+    <div class="box final reveal">
+      <div>
+        <span class="status"><i></i>Open to remote opportunities</span>
+        <h3 style="margin-top:14px">Need someone who can build the app and also secure it?</h3>
+        <p>I'm happy to talk about mobile security, iOS engineering, or automating a slow business process. Email is fastest.</p>
+        <button class="btn y" id="copy">Copy my email</button>
+      </div>
+      <div class="links">
+        <a class="link" href="mailto:balqisshafiraaini@gmail.com">Email<small>balqisshafiraaini@gmail.com</small></a>
+        <a class="link" href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" rel="noopener">LinkedIn<small>linkedin.com/in/balqishafiraini</small></a>
+        <a class="link" href="https://github.com/balqishafiraini" target="_blank" rel="noopener">GitHub<small>github.com/balqishafiraini</small></a>
+        <a class="link" href="https://balqishafiraini.medium.com/" target="_blank" rel="noopener">Medium<small>balqishafiraini.medium.com</small></a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Thanks for playing · © Balqis Shafira Aini</footer>
+
+<div id="toast" role="status" aria-live="polite"><b id="toast-t"></b><span id="toast-s"></span></div>
 
 <script>
 (()=>{
-const W=2200,H=1500,EDGE=120;
-const world=document.getElementById('world'),vp=document.getElementById('viewport');
-world.style.width=W+'px';world.style.height=H+'px';
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 
 /* ---------- content ---------- */
-const PLACES=[
- {id:'home',name:"Shasha's House",x:830,y:300,w:260,h:210,roof:'#ff7aa8',wall:'#fff1f5',tone:'#ffc4d8',wins:2,
-  kick:'Place 1 · About me',title:'Hi, I\'m Shasha!',sub:'iOS developer turned Application Security Engineer.',
-  body:()=>`<div class="about">
-   <div class="polaroid"><img src="balqis.jpg" alt="Shasha"><span>that's me</span></div>
-   <div>
-    <p><b>I spent 4+ years building and hardening financial-grade iOS apps</b> for banks and fintech — LINE Bank (KEB Hana), Bank Jakarta, and Pegadaian. Now I secure banking applications at scale as an <b>Application Security Engineer at PT Bank Mandiri</b>.</p>
-    <p>I work hands-on with hardware-backed authentication (Secure Enclave, ECDSA P-256), SSL certificate pinning, runtime protection (jailbreak, debugger, Frida detection), and key rotation in production banking apps. I also built a full passwordless MFA system end-to-end on my own.</p>
-    <p>Outside the bank, I founded <b>PT Anoran Technology</b>, where I signed 2 large enterprise clients and built the automated reporting and competitor-analysis systems that run their daily operations.</p>
-    <div class="chips"><span class="chip">Apple WWDC22 Winner</span><span class="chip">Cargill Global Scholar</span><span class="chip">Summa Cum Laude · GPA 3.94</span><span class="chip">Open to remote work</span></div>
-   </div></div>
-   <div class="stats">
-    <div class="stat"><b>4+</b><small>years iOS in finance</small></div>
-    <div class="stat"><b>2</b><small>enterprise B2B clients</small></div>
-    <div class="stat"><b>9</b><small>HAKI submissions</small></div>
-    <div class="stat"><b>−72%</b><small>cost reduction shipped</small></div>
-   </div>`},
- {id:'quest',name:'Quest Hall',x:1380,y:280,w:300,h:230,roof:'#8b6cf6',wall:'#f1ecff',tone:'#d9cbff',wins:3,
-  kick:'Place 2 · Projects',title:'Quests Completed',sub:'The projects I\'m proudest of, sorted by rarity.',
-  body:()=>`<div class="cards">
-   <div class="qcard legendary"><span class="rar leg">Legendary</span><h3>Melodissimo</h3><div class="meta">SwiftUI · Apple WWDC22 · Music</div>
-    <p>Award-winning music-learning app recognized at <b>Apple WWDC22</b>. Reached App Store Top 50 in Music. Built from concept to launch with SwiftUI.</p>
-    <div class="tags"><span>SwiftUI</span><span>WWDC22</span><span>Top 50</span></div></div>
-   <div class="qcard"><span class="rar epic">Epic</span><h3>MFA-App</h3><div class="meta">iOS + FastAPI · Hardware-backed auth</div>
-    <p>Full passwordless MFA: <b>Secure Enclave</b> EC P-256, biometry-bound keys, replay prevention, jailbreak/debugger/Frida detection, SSL pinning, zero-downtime key rotation.</p>
-    <div class="tags"><span>Secure Enclave</span><span>ECDSA</span><span>SSL Pinning</span></div></div>
-   <div class="qcard"><span class="rar epic">Epic</span><h3>LINE Bank — QRIS Overseas</h3><div class="meta">PT Bank KEB Hana · iOS · Fintech</div>
-    <p>Owned the QRIS overseas payment overhaul: <b>−70%</b> transaction time and <b>−72%</b> monthly fee-exemption gross cost. Also shipped digital loan and a Korean NFC transit card.</p>
-    <div class="tags"><span>RxSwift</span><span>QRIS</span><span>NFC</span></div></div>
-   <div class="qcard"><span class="rar epic">Epic</span><h3>PT Anoran Technology</h3><div class="meta">Founder · B2B Automation</div>
-    <p>Founded my own tech company. Signed <b>2 large enterprise clients</b> and built automated daily multi-store reporting and competitor analysis systems.</p>
-    <div class="tags"><span>B2B</span><span>Automation</span></div></div>
-   <div class="qcard"><span class="rar rare">Rare</span><h3>Enterprise ERP — IoT Sync</h3><div class="meta">Flutter · IoT · 9 HAKI</div>
-    <p>Real-time data sync that cut operational inefficiency by <b>30%</b>; integrated weight bridge and GPS tracking; contributed to <b>9 HAKI</b> submissions.</p>
-    <div class="tags"><span>Flutter</span><span>GetX</span><span>IoT</span></div></div>
-   <div class="qcard"><span class="rar rare">Rare</span><h3>Academy Apps</h3><div class="meta">Apple Developer Academy · 2.8% acceptance</div>
-    <p>Shipped 5 iOS projects, 2 on the App Store with <b>5.0 ratings</b>: Reeach (fintech for Gen Z), Rerupa (Vision + PencilKit drawing), Compy (storytelling programming).</p>
-    <div class="tags"><span>UIKit</span><span>Vision</span><span>PencilKit</span></div></div>
-  </div>`},
- {id:'journey',name:'Journey Tower',x:330,y:470,w:210,h:320,roof:'#4aa3ff',wall:'#eaf5ff',tone:'#bfe3ff',wins:4,tall:true,
-  kick:'Place 3 · Experience',title:'My Journey, Level by Level',sub:'Every job leveled me up. Newest first.',
-  body:()=>{const L=[
-   ['now','Sep 2026 — Present','Application Security Engineer','PT Bank Mandiri',['Securing banking applications at scale: mobile and application-layer security across the bank\'s digital products.']],
-   ['','Mar 2026 — Aug 2026','iOS Developer — New Mobile Banking App','Bank Jakarta · via PT Anoran Technology',['Built a new mobile banking app from scratch: QRIS, top up, payment, digital loan, credit card.','Secure API integrations with Moya, Alamofire, SwiftProtobuf.']],
-   ['','Nov 2025 — Mar 2026','iOS Developer — Tring!','Pegadaian',['SwiftUI + Combine + MVVM-R; 50+ tickets a month, 5+ features under tight timelines.']],
-   ['','May 2024 — Nov 2025','iOS Developer — LINE Bank','PT Bank KEB Hana Indonesia',['QRIS overseas payments: −70% transaction time; fee-free feature: −72% gross cost.','Digital loan, Korean transportation card (NFC e-money), RxSwift/MVVM modernization.']],
-   ['','2023 — Present','Founder & B2B Automation Consultant','PT Anoran Technology',['2 large enterprise clients; automated daily multi-store reporting and competitor analysis.']],
-   ['','Jun 2023 — Nov 2023','Flutter Mobile Developer','PT Rindang Tigasatu Pratama',['Enterprise ERP, real-time IoT sync (−30% inefficiency), 9 HAKI submissions.']],
-   ['','Feb 2022 — Dec 2022','iOS Developer','Apple Developer Academy · 2.8% acceptance',['5 projects, 2 on the App Store (5.0 average). Built Melodissimo, recognized at WWDC22.']]];
-   return '<div class="chapters">'+L.map((c,i)=>`<div class="ch ${c[0]}"><div class="lv"><div><small>LEVEL</small><b>${L.length-i}</b></div></div><div><div class="when">${c[1]}${c[0]?' · current':''}</div><h3>${c[2]}</h3><div class="org">${c[3]}</div><ul>${c[4].map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`).join('')+'</div>'}},
- {id:'dojo',name:'Skill Dojo',x:1560,y:800,w:290,h:210,roof:'#ff9f43',wall:'#fff3e3',tone:'#ffd9b0',wins:2,
-  kick:'Place 4 · Skills',title:'Character Sheet',sub:'My stats after years of training.',
-  body:()=>{const G=[
-   ['Mobile Security','#ff7aa8',[['Secure Enclave & Keychain',92],['SSL/TLS Pinning',90],['Runtime Protection',88],['OWASP MASVS',85]]],
-   ['iOS Engineering','#4aa3ff',[['Swift / SwiftUI',93],['UIKit / RxSwift / Combine',90],['MVVM / Architecture',90],['Moya / Alamofire / Protobuf',87]]],
-   ['Backend & Automation','#5cc96b',[['B2B Workflow Automation',90],['API Hardening',85],['FastAPI (Python)',80],['Flutter / GetX',78]]]];
-   return `<div class="classcard"><img src="images/shasha-face.jpg" alt=""><div><b>Class: Security Engineer</b>Subclass: iOS Developer · Special move: Secure Enclave</div></div>
-   <div class="sheet-row">${G.map(g=>`<div class="skillbox" style="--c:${g[1]}"><h4>${g[0]}</h4>${g[2].map(s=>`<div class="sb"><div class="lb"><span>${s[0]}</span><span>${s[1]}</span></div><div class="tr"><i data-w="${s[1]}"></i></div></div>`).join('')}</div>`).join('')}</div>`}},
- {id:'post',name:'Post Office',x:620,y:1060,w:250,h:190,roof:'#2ec4b6',wall:'#e6fbf8',tone:'#bdf1ea',wins:2,door:'#d9534f',
-  kick:'Place 5 · Contact',title:'Send Me a Letter',sub:'I\'d love to hear from you.',
-  body:()=>`<div class="links">
-   <a class="link" href="mailto:balqisshafiraaini@gmail.com">Email<small>balqisshafiraaini@gmail.com</small></a>
-   <a class="link" href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" rel="noopener">LinkedIn<small>linkedin.com/in/balqishafiraini</small></a>
-   <a class="link" href="https://github.com/balqishafiraini" target="_blank" rel="noopener">GitHub<small>github.com/balqishafiraini</small></a>
-   <a class="link" href="https://balqishafiraini.medium.com/" target="_blank" rel="noopener">Medium<small>balqishafiraini.medium.com</small></a>
-  </div><div class="status">Status: open to remote opportunities (WFH)</div>`},
- {id:'fame',name:'Hall of Fame',x:1130,y:1090,w:140,h:180,statue:true,tone:'#fff0a8',
-  kick:'Place 6 · Achievements',title:'Hall of Fame',sub:'Trophies collected along the way.',
-  body:()=>`<div class="fame">
-   <div class="item"><div class="medal">1</div><div><h3>Apple WWDC22 Swift Student Challenge Winner</h3><p>Recognized by Apple for Melodissimo, a music-learning app that later reached App Store Top 50 in Music.</p></div></div>
-   <div class="item"><div class="medal">2</div><div><h3>Cargill Global Scholar 2022–24</h3><p>One of 10 students selected worldwide.</p></div></div>
-   <div class="item"><div class="medal">3</div><div><h3>Apple Developer Academy</h3><p>Accepted with a 2.8% acceptance rate. Shipped 2 App Store apps rated 5.0.</p></div></div>
-   <div class="item"><div class="medal">4</div><div><h3>Summa Cum Laude · GPA 3.94/4.0</h3><p>University of Lampung.</p></div></div>
-  </div>`}
+// f: filter groups · r: rarity [class,label]
+const QUESTS=[
+ {f:'ios',r:['leg','Legendary'],t:'Melodissimo',who:'Apple WWDC22 Swift Student Challenge',img:'melodissimo',
+  sum:'An interactive Swift Playgrounds app with an on-screen melodica that tells the story of my school\'s melodica through code.',
+  wins:['WWDC22 winner','App Store Top 50 Music'],
+  log:{Built:'My first Swift Playground and my first SwiftUI project, from concept to submission.',Result:'Apple selected it as a winning WWDC22 Swift Student Challenge submission, and it later reached the App Store Top 50 in Music.'},
+  tags:['SwiftUI','Swift Playgrounds']},
+ {f:'sec',r:['epic','Epic'],t:'MFA-App: passwordless login',who:'Personal project · iOS + FastAPI',
+  sum:'A complete passwordless multi-factor login system, built by myself end to end: the iOS app, the backend, and the security controls.',
+  wins:['Solo, end to end'],
+  log:{Problem:'Passwords and SMS OTP are easy to phish or intercept, and banks need login that is tied to the real device and the real person.',Built:['Login keys created inside the iPhone\'s Secure Enclave (EC P-256) so the private key never leaves the chip','Keys locked behind Face ID / Touch ID; the server sends a challenge and the phone signs it (ECDSA)','Replay prevention so a captured request can\'t be reused','Jailbreak, debugger and Frida detection, plus SSL certificate pinning','Key rotation without downtime'],Result:'A working reference implementation of the same protections used in production banking apps.'},
+  tags:['Secure Enclave','ECDSA P-256','SSL pinning','FastAPI']},
+ {f:'bank',r:['epic','Epic'],t:'LINE Bank: QRIS overseas',who:'PT Bank KEB Hana Indonesia · iOS',
+  sum:'Let LINE Bank customers pay by scanning QRIS codes abroad. I owned the iOS side of the payment overhaul.',
+  wins:['−70% transaction time','−72% fee-exemption cost'],
+  log:{Problem:'Overseas QR payments were slow, and the fee-free promotion was costing the bank a lot each month.',Built:['Reworked the QRIS overseas payment flow in the iOS app','Built the fee-exemption feature with cheaper logic behind it','Also shipped digital loan and a Korean transit card (NFC e-money) feature','Modernized code with RxSwift and MVVM'],Result:'Transactions became 70% faster and the monthly gross cost of the fee-free feature dropped 72%.'},
+  tags:['Swift','RxSwift','MVVM','NFC','QRIS']},
+ {f:'bank',r:['rare','Rare'],t:'Bank Jakarta: new mobile banking app',who:'Bank Jakarta · via PT Anoran Technology',
+  sum:'Helped build Bank Jakarta\'s new mobile banking app from scratch.',
+  wins:['Built from zero'],
+  log:{Built:['QRIS payments, top up, bill payment, digital loan and credit card features','Secure API integration using Moya, Alamofire and SwiftProtobuf'],Result:'Core money features delivered on a brand-new codebase.'},
+  tags:['Swift','Moya','Alamofire','Protobuf']},
+ {f:'bank',r:['rare','Rare'],t:'Pegadaian: Tring!',who:'Pegadaian · iOS',
+  sum:'Feature work on Pegadaian\'s Tring! app, under tight deadlines.',
+  wins:['50+ tickets / month','5+ features'],
+  log:{Built:'New features and fixes in SwiftUI with Combine and an MVVM-R architecture.',Result:'Closed 50+ tickets a month and delivered 5+ features on time.'},
+  tags:['SwiftUI','Combine','MVVM-R']},
+ {f:'biz',r:['epic','Epic'],t:'PT Anoran Technology',who:'Founder · B2B automation',
+  sum:'My own company. We replace slow manual reporting with automated systems for businesses.',
+  wins:['2 enterprise clients'],
+  log:{Problem:'Clients with many stores were collecting sales numbers and checking competitors by hand every day.',Built:['Automated daily multi-store reporting','Automated competitor analysis'],Result:'Signed 2 large enterprise clients who now run their daily operations on these systems.'},
+  tags:['Automation','Reporting','B2B']},
+ {f:'biz',r:['rare','Rare'],t:'Enterprise ERP with IoT sync',who:'PT Rindang Tigasatu Pratama · Flutter',
+  sum:'A Flutter ERP app connected to field hardware: truck weigh bridges and GPS trackers.',
+  wins:['−30% inefficiency','9 HAKI filings'],
+  log:{Built:['Real-time data sync between the app and IoT devices','Weigh bridge and GPS tracking integration'],Result:'Operational inefficiency dropped 30% and the work contributed to 9 intellectual property (HAKI) filings.'},
+  tags:['Flutter','GetX','IoT']},
+ {f:'ios',r:['rare','Rare'],t:'Reeach',who:'Apple Developer Academy · iOS',img:'reeach',
+  sum:'A money planner for young Gen Z that helps them set S.M.A.R.T. savings goals and stick to them.',
+  tags:['iOS','Fintech']},
+ {f:'ios',r:['rare','Rare'],t:'Rerupa',who:'Apple Developer Academy · iPadOS',img:'rerupa',
+  sum:'A re-drawing app: Apple\'s Vision contour detection traces the outlines of a picture, then you redraw and recolor it with Apple Pencil.',
+  tags:['Vision','PencilKit','iPadOS']},
+ {f:'ios',r:['rare','Rare'],t:'Compy',who:'Apple Developer Academy · iOS',img:'compy',
+  sum:'Teaches programming basics to young adults from non-IT majors through short stories instead of jargon.',
+  tags:['iOS','Education']},
+ {f:'ios',r:['com','Common'],t:'Beautize',who:'iOS',img:'beautize',
+  sum:'Helps beauty enthusiasts organize their products so nothing sits unused and goes to waste.',
+  tags:['iOS']},
+ {f:'ios',r:['com','Common'],t:'FOTRA',who:'iOS',img:'fotra',
+  sum:'Helps travelers find destination information for their trip in one place.',
+  tags:['iOS','Travel']}
+];
+const LEVELS=[
+ [1,'Sep 2026 — now','Application Security Engineer','PT Bank Mandiri','Securing the bank\'s apps: mobile and application-layer security across its digital products.'],
+ [0,'Mar 2026 — Aug 2026','iOS Developer, new mobile banking app','Bank Jakarta · via PT Anoran Technology','Built a new banking app from scratch.',['QRIS, top up, payment, digital loan, credit card','Secure API integration with Moya, Alamofire, SwiftProtobuf']],
+ [0,'Nov 2025 — Mar 2026','iOS Developer, Tring!','Pegadaian','Fast feature delivery on a SwiftUI app.',['SwiftUI + Combine + MVVM-R','50+ tickets a month, 5+ features under tight timelines']],
+ [0,'May 2024 — Nov 2025','iOS Developer, LINE Bank','PT Bank KEB Hana Indonesia','Owned payment features used by bank customers.',['QRIS overseas payments: −70% transaction time','Fee-free feature: −72% monthly gross cost','Digital loan, Korean transit card (NFC), RxSwift/MVVM modernization']],
+ [0,'2023 — now','Founder & B2B Automation Consultant','PT Anoran Technology','Running my own company alongside my main job.',['2 large enterprise clients','Automated daily multi-store reporting and competitor analysis']],
+ [0,'Jun 2023 — Nov 2023','Flutter Mobile Developer','PT Rindang Tigasatu Pratama','Enterprise ERP connected to IoT devices.',['Real-time IoT sync: −30% inefficiency','9 HAKI filings']],
+ [0,'Feb 2022 — Dec 2022','iOS Developer (Academy)','Apple Developer Academy','Where I became an iOS developer. 2.8% acceptance rate.',['5 projects, 2 on the App Store with 5.0 ratings','Built Melodissimo, a WWDC22 winner']]
+];
+const SKILLS=[
+ ['Mobile Security','#ff7aa8','Protecting apps and the data inside them.',[['Secure Enclave & Keychain',92],['SSL/TLS pinning',90],['Runtime protection (jailbreak, Frida)',88],['OWASP MASVS',85]]],
+ ['iOS Engineering','#4aa3ff','Building the apps themselves.',[['Swift / SwiftUI',93],['UIKit / RxSwift / Combine',90],['MVVM architecture',90],['Networking (Moya, Protobuf)',87]]],
+ ['Backend & Automation','#5cc96b','The systems behind the app.',[['Business workflow automation',90],['API hardening',85],['Python / FastAPI',80],['Flutter / GetX',78]]]
 ];
 const CHESTS=[
- {x:560,y:330,t:'4+ years',s:'building iOS apps for banks and fintech.'},
- {x:1930,y:440,t:'−70% transaction time',s:'from the LINE Bank QRIS overseas overhaul.'},
- {x:300,y:1150,t:'9 HAKI submissions',s:'intellectual property rights from the IoT ERP project.'},
- {x:1420,y:930,t:'Top 50 on the App Store',s:'Melodissimo reached Top 50 in Music.'}
+ ['First job ever?','Selling K-pop merch. I shipped thousands of orders to Korea, Japan, France, the UK and more, with 3 people helping me.'],
+ ['Fun fact','I didn\'t think I was good at logic or math before I joined an IT major. Now I build security features for banking apps.'],
+ ['Side quest','Before tech, I led my school\'s science writing club of 30+ students and headed the design division of a school olympiad.'],
+ ['Writer mode','I also write on Medium, including a post on Apple\'s Vision contour detection, the tech behind Rerupa.']
 ];
-const TREES=[[200,270,''],[250,420,'pine'],[640,230,'blossom'],[700,620,''],[1250,240,'pine'],[1790,260,''],[1960,650,'blossom'],[2010,930,''],[190,920,'pine'],[480,1020,''],[990,1210,'blossom'],[1010,1370,''],[1470,1320,'pine'],[1580,1180,''],[1890,1080,'pine'],[300,1340,'blossom'],[620,1360,''],[2040,300,'pine'],[1110,200,'blossom'],[860,860,'']];
-const POND={x:1760,y:1190,w:270,h:150};
-const SPAWN={x:1100,y:840};
 
-/* ---------- build world ---------- */
-const el=(cls,parent=world,tag='div')=>{const e=document.createElement(tag);e.className=cls;parent.appendChild(e);return e};
-const isl=el('island');Object.assign(isl.style,{left:'40px',top:'40px',width:W-80+'px',height:H-80+'px'});
-// paths
-const NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
-svg.setAttribute('class','paths');svg.setAttribute('width',W);svg.setAttribute('height',H);
-PLACES.forEach(p=>{p.dx=p.x+p.w/2;p.dy=p.y+p.h+14});
-const mk=(d,stroke,w)=>{const pth=document.createElementNS(NS,'path');pth.setAttribute('d',d);pth.setAttribute('fill','none');pth.setAttribute('stroke',stroke);pth.setAttribute('stroke-width',w);pth.setAttribute('stroke-linecap','round');svg.appendChild(pth)};
-const routes=PLACES.map(p=>`M${SPAWN.x} ${SPAWN.y} Q${(SPAWN.x+p.dx)/2} ${p.dy+(p.dy<SPAWN.y?60:-40)} ${p.dx} ${p.dy}`);
-routes.forEach(d=>mk(d,'#e7c98a',70));routes.forEach(d=>mk(d,'#f4dfa6',56));
-const plaza=document.createElementNS(NS,'circle');plaza.setAttribute('cx',SPAWN.x);plaza.setAttribute('cy',SPAWN.y);plaza.setAttribute('r',90);plaza.setAttribute('fill','#f4dfa6');plaza.setAttribute('stroke','#e7c98a');plaza.setAttribute('stroke-width',7);svg.appendChild(plaza);
-world.appendChild(svg);
-// flowers (seeded)
-let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
-const FC=['#ff7aa8','#ffd23f','#fff','#8b6cf6','#ff9f43'];
-for(let i=0;i<120;i++){const f=el('flower');f.style.left=(160+rnd()*(W-320))+'px';f.style.top=(160+rnd()*(H-320))+'px';f.style.background=FC[i%FC.length]}
-const pond=el('pond');Object.assign(pond.style,{left:POND.x+'px',top:POND.y+'px',width:POND.w+'px',height:POND.h+'px'});
+/* ---------- render ---------- */
+const logHtml=l=>'<dl class="log">'+Object.entries(l).map(([k,v])=>`<dt>${k==='Built'?'What I did':k}</dt><dd>${Array.isArray(v)?'<ul>'+v.map(x=>`<li>${x}</li>`).join('')+'</ul>':v}</dd>`).join('')+'</dl>';
+$('#quests-list').innerHTML=QUESTS.map(q=>`<article class="box q reveal ${q.r[0]==='leg'?'legendary':''}" data-f="${q.f}">
+ ${q.img?`<img class="shot" src="images/thumbs/${q.img}.webp" alt="${q.t} preview" width="600" height="200" loading="lazy" decoding="async">`:''}
+ <div class="in"><div class="top"><span class="rar ${q.r[0]}">${q.r[1]}</span></div>
+ <h3>${q.t}</h3><div class="who">${q.who}</div><p class="sum">${q.sum}</p>
+ ${q.wins?`<div class="wins">${q.wins.map(w=>`<b>${w}</b>`).join('')}</div>`:''}
+ ${q.log?`<details><summary>Read the quest log</summary>${logHtml(q.log)}</details>`:''}
+ <div class="tags">${q.tags.map(t=>`<span>${t}</span>`).join('')}</div></div></article>`).join('');
+$('#levels').innerHTML=LEVELS.map((l,i)=>`<article class="box lv reveal ${l[0]?'now':''}" data-n="${LEVELS.length-i}">
+ <div class="when">${l[1]}${l[0]?'<span class="now-pill">current</span>':''}</div><h3>${l[2]}</h3><div class="org">${l[3]}</div><p>${l[4]}</p>
+ ${l[5]?`<ul>${l[5].map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</article>`).join('');
+$('#sheet').innerHTML=SKILLS.map(g=>`<div class="box sk reveal" style="--c:${g[1]}"><h3>${g[0]}</h3><p>${g[2]}</p>${g[3].map(s=>`<div class="sb"><div class="l"><span>${s[0]}</span><span>${s[1]}</span></div><div class="t"><i data-w="${s[1]}"></i></div></div>`).join('')}</div>`).join('');
 
-const solids=[{x:POND.x+10,y:POND.y+10,w:POND.w-20,h:POND.h-20}];
-const depth=(e,footY)=>e.style.zIndex=10+Math.round(footY);
-
-PLACES.forEach(p=>{
-  const b=el('ent bld'+(p.statue?' statue':''));p.el=b;
-  Object.assign(b.style,{left:p.x+'px',top:p.y+'px',width:p.w+'px',height:p.h+'px'});
-  if(p.roof){b.style.setProperty('--roof',p.roof);b.style.setProperty('--wall',p.wall)}
-  if(p.door)b.style.setProperty('--door',p.door);
-  if(p.statue){el('ped',b);el('star',b)}
-  else{
-    const rh=p.tall?0.3:0.45;
-    const r=el('roof',b);r.style.height=p.h*rh+8+'px';
-    const w=el('wall',b);w.style.height=p.h*(1-rh)+'px';
-    const rows=p.tall?2:1,per=p.wins/rows;
-    for(let row=0;row<rows;row++)for(let i=0;i<per;i++){
-      const win=el('win',w);const slots=per+1;let lx=(i+1)/slots*100;
-      if(per===2)lx=i?80:20;if(per===3)lx=[16,50,84][i];
-      if(!p.tall&&per===3&&i===1){win.remove();continue}
-      win.style.left=`calc(${lx}% - 17px)`;win.style.top=(p.tall?14+row*62:16)+'px'}
-    el('door',w)}
-  el('label',b).textContent=p.name;
-  el('prompt',b).textContent=matchMedia('(pointer:coarse)').matches?'Tap to enter':'Press E to enter';
-  el('chk',b).textContent='✓';
-  depth(b,p.y+p.h);
-  solids.push({x:p.x,y:p.y+(p.statue?p.h*.5:p.h*.35),w:p.w,h:p.h*(p.statue?.5:.65),place:p});
-});
-TREES.forEach(([x,y,k])=>{const t=el('ent tree '+k);t.style.left=x-42+'px';t.style.top=y-100+'px';
-  t.innerHTML='<div class="trunk"></div><div class="crown"></div>';depth(t,y);solids.push({x:x-12,y:y-16,w:24,h:16})});
-const sign=el('ent sign');Object.assign(sign.style,{left:SPAWN.x-95+'px',top:SPAWN.y-200+'px',width:'190px',height:'110px'});
-sign.innerHTML='<div class="board">Welcome to Shasha Island!<br>Visit all 6 places</div><div class="post"></div>';depth(sign,SPAWN.y-90);
-CHESTS.forEach(c=>{const e=el('ent chest');c.el=e;e.style.left=c.x-23+'px';e.style.top=c.y-38+'px';e.innerHTML='<div class="base"></div><div class="lid"></div><div class="lock"></div>';depth(e,c.y)});
-
-const pl=el('ent player');pl.innerHTML='<div class="shadow"></div><div class="rig"><div class="legs"><i></i><i></i></div><div class="torso"></div><div class="head"></div></div>';
-
-/* ---------- state ---------- */
-const P={x:SPAWN.x,y:SPAWN.y+20,tx:null,ty:null,pending:null,stuck:0};
-const keys=new Set();let paused=true,zoom=1,cam={x:0,y:0};
-const visited=new Set(),opened=new Set();let finished=false;
-
-function resize(){zoom=innerWidth<700?0.62:innerWidth<1100?0.82:1}
-addEventListener('resize',resize);resize();
-
-/* ---------- movement ---------- */
-const HB={w:26,h:12};
-const hits=(x,y)=>{if(x-HB.w/2<EDGE||x+HB.w/2>W-EDGE||y-HB.h<EDGE||y>H-EDGE)return true;
-  for(const s of solids)if(x+HB.w/2>s.x&&x-HB.w/2<s.x+s.w&&y>s.y&&y-HB.h<s.y+s.h)return true;return false};
-const SPEED=4.2;
-function step(){
-  let vx=0,vy=0;
-  if(keys.has('left'))vx-=1;if(keys.has('right'))vx+=1;if(keys.has('up'))vy-=1;if(keys.has('down'))vy+=1;
-  if(vx||vy){P.tx=null;P.pending=null}
-  else if(P.tx!==null){const dx=P.tx-P.x,dy=P.ty-P.y,d=Math.hypot(dx,dy);
-    if(d<SPEED){P.x=P.tx;P.y=P.ty;P.tx=null;arrive()}else{vx=dx/d;vy=dy/d}}
-  const moving=!!(vx||vy);
-  if(moving){const n=Math.hypot(vx,vy),sx=vx/n*SPEED,sy=vy/n*SPEED;const ox=P.x,oy=P.y;
-    if(!hits(P.x+sx,P.y))P.x+=sx;if(!hits(P.x,P.y+sy))P.y+=sy;
-    if(P.tx!==null){if(Math.hypot(P.x-ox,P.y-oy)<.5){if(++P.stuck>20){P.tx=null;arrive()}}else P.stuck=0}
-    if(sx<-.1)pl.classList.add('flip');else if(sx>.1)pl.classList.remove('flip')}
-  pl.classList.toggle('walk',moving);
-}
-function arrive(){const id=P.pending;P.pending=null;P.stuck=0;
-  if(!id)return;const p=PLACES.find(q=>q.id===id);if(p&&dist(p.dx,p.dy)<90)openPlace(p)}
-const dist=(x,y)=>Math.hypot(P.x-x,P.y-y);
-
-let nearPlace=null;
-function checks(){
-  nearPlace=null;
-  PLACES.forEach(p=>{const n=dist(p.dx,p.dy)<80;p.el.classList.toggle('near',n);if(n)nearPlace=p});
-  CHESTS.forEach((c,i)=>{if(!opened.has(i)&&dist(c.x,c.y+6)<46)openChest(i)});
-}
-function render(){
-  pl.style.left=P.x-28+'px';pl.style.top=P.y-84+'px';depth(pl,P.y);
-  const vw=innerWidth/zoom,vh=innerHeight/zoom;
-  const tx=W<vw?(W-vw)/2:Math.max(0,Math.min(W-vw,P.x-vw/2));
-  const ty=H<vh?(H-vh)/2:Math.max(0,Math.min(H-vh,P.y-40-vh/2));
-  cam.x+=(tx-cam.x)*.12;cam.y+=(ty-cam.y)*.12;
-  world.style.transform=`scale(${zoom}) translate(${-cam.x}px,${-cam.y}px)`;
-}
-function loop(){if(!paused){step();checks()}render();requestAnimationFrame(loop)}
-
-/* ---------- input ---------- */
-const KM={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};
-addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();return}
-  if(!titleGone){if(e.key==='Enter'||e.key===' '){e.preventDefault();startGame()}return}
-  if(modalOpen)return;
-  if(KM[e.key]){keys.add(KM[e.key]);e.preventDefault()}
-  else if((e.key==='e'||e.key==='E'||e.key==='Enter'||e.key===' ')&&nearPlace){e.preventDefault();openPlace(nearPlace)}
-  else if(e.key==='m'||e.key==='M')openMap();
-});
-addEventListener('keyup',e=>{if(KM[e.key])keys.delete(KM[e.key])});
-addEventListener('blur',()=>keys.clear());
-vp.addEventListener('pointerdown',e=>{
-  if(paused)return;
-  const b=e.target.closest('.bld'),c=e.target.closest('.chest');
-  if(b){const p=PLACES.find(q=>q.el===b);if(dist(p.dx,p.dy)<80){openPlace(p);return}
-    P.tx=p.dx;P.ty=p.dy;P.pending=p.id;P.stuck=0;return}
-  const wx=e.clientX/zoom+cam.x,wy=e.clientY/zoom+cam.y;
-  if(c){const ch=CHESTS.find(q=>q.el===c);P.tx=ch.x;P.ty=ch.y+14}else{P.tx=wx;P.ty=wy}
-  P.pending=null;P.stuck=0;
-  const m=el('tapmark');m.style.left=wx+'px';m.style.top=wy+'px';setTimeout(()=>m.remove(),500);
+/* filters */
+$$('.filters button').forEach(b=>b.onclick=()=>{
+  $$('.filters button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  $$('.q').forEach(q=>q.hidden=!(b.dataset.f==='all'||q.dataset.f===b.dataset.f));
 });
 
-/* ---------- UI ---------- */
-const modal=document.getElementById('modal'),mHead=document.getElementById('m-head');
-let modalOpen=false,lastFocus=null;
-function showModal(o){
-  document.getElementById('m-kick').textContent=o.kick;document.getElementById('m-title').textContent=o.title;
-  document.getElementById('m-sub').textContent=o.sub;document.getElementById('m-body').innerHTML=o.html;
-  mHead.style.setProperty('--tone',o.tone||'#ffd23f');
-  modal.classList.add('on');modal.setAttribute('aria-hidden','false');modalOpen=true;paused=true;keys.clear();
-  lastFocus=document.activeElement;document.getElementById('m-close').focus();
-  modal.querySelector('.sheet').scrollTop=0;
-  requestAnimationFrame(()=>setTimeout(()=>modal.querySelectorAll('.tr i').forEach(i=>i.style.width=i.dataset.w+'%'),150));
-}
-function closeModal(){if(!modalOpen)return;modal.classList.remove('on');modal.setAttribute('aria-hidden','true');modalOpen=false;
-  if(titleGone)paused=false;if(lastFocus&&lastFocus.focus)lastFocus.focus();
-  if(!finished&&visited.size===PLACES.length){finished=true;setTimeout(complete,350)}}
-document.getElementById('m-close').onclick=closeModal;
-modal.addEventListener('pointerdown',e=>{if(e.target===modal)closeModal()});
+/* ---------- map track ---------- */
+const stages=$$('section.stage'),stops=$('#stops'),walker=$('#walker');
+stops.innerHTML=stages.map((s,i)=>`<a class="stop" href="#${s.id}" style="--c:${s.dataset.c}" aria-label="Stage ${i+1}: ${s.dataset.name}">${i+1}<span>${s.dataset.name}</span></a>`).join('');
+const stopEls=[...stops.children],visited=new Set();
 
-function openPlace(p){
-  P.tx=null;P.pending=null;
-  if(!visited.has(p.id)){visited.add(p.id);p.el.classList.add('done');updateHud()}
-  showModal({kick:p.kick,title:p.title,sub:p.sub,html:p.body(),tone:p.tone});
-}
-function updateHud(){
-  document.getElementById('p-cnt').textContent=visited.size+'/'+PLACES.length;
-  document.getElementById('p-bar').style.width=visited.size/PLACES.length*100+'%';
-  document.getElementById('c-cnt').textContent=opened.size+'/'+CHESTS.length;
-}
-const toast=document.getElementById('toast');let tt;
-function say(t,s){document.getElementById('toast-t').textContent=t;document.getElementById('toast-s').textContent=s;
-  toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2800)}
-function openChest(i){opened.add(i);const c=CHESTS[i];c.el.classList.add('open');updateHud();
-  say('Treasure found! '+c.t,c.s+(opened.size===CHESTS.length?' All chests opened!':''))}
+/* ---------- toast ---------- */
+const toast=$('#toast');let tt;
+function say(t,s,ms=3000){$('#toast-t').textContent=t;$('#toast-s').textContent=s;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),ms)}
 
-function openMap(){
-  const dots=['1','2','3','4','5','6'];
-  showModal({kick:'Quick travel',title:'Island Map',sub:'Jump straight to any place.',tone:'#c8eefc',
-    html:'<div class="travel">'+PLACES.map((p,i)=>`<button data-go="${p.id}" class="${visited.has(p.id)?'done':''}" style="--c:${p.tone}"><span class="dot">${visited.has(p.id)?'':dots[i]}</span><span><b>${p.name}</b>${p.kick.split('· ')[1]}</span></button>`).join('')+'</div>'});
-  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const p=PLACES.find(q=>q.id===b.dataset.go);
-    P.x=p.dx;P.y=p.dy+30;P.tx=null;closeModal();setTimeout(()=>openPlace(p),120)});
+/* ---------- scroll: xp + walker ---------- */
+let ticking=false,walkT;
+function onScroll(){
+  ticking=false;
+  const y=scrollY,vh=innerHeight,max=document.documentElement.scrollHeight-vh;
+  const pct=max>0?Math.min(1,y/max):0;
+  $('#xp').style.width=pct*100+'%';$('#xp-t').textContent=Math.round(pct*100)+'%';
+  // walker position: interpolate between stops based on which stage is at the reading line
+  const line=y+vh*.4;let pos=0;
+  for(let i=0;i<stages.length;i++){const s=stages[i],top=s.offsetTop,h=s.offsetHeight;
+    if(line>=top){pos=i+Math.min(1,(line-top)/h)*(i<stages.length-1?1:0)}}
+  if(line<stages[0].offsetTop)pos=0;
+  if(pct>.995)pos=stages.length-1;
+  const a=stopEls[0].offsetLeft,b=stopEls[stopEls.length-1].offsetLeft;
+  const i0=Math.min(stopEls.length-1,Math.floor(pos)),i1=Math.min(stopEls.length-1,i0+1),f=pos-i0;
+  const x=stopEls[i0].offsetLeft+(stopEls[i1].offsetLeft-stopEls[i0].offsetLeft)*f;
+  walker.style.transform=`translateX(${Math.max(a,Math.min(b,x))}px)`;
+  walker.classList.add('walk');clearTimeout(walkT);walkT=setTimeout(()=>walker.classList.remove('walk'),180);
 }
-document.getElementById('mapbtn').onclick=openMap;
+addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});
+addEventListener('resize',onScroll);
+onScroll();walker.classList.remove('walk');
 
-function complete(){
+/* stage visits */
+const so=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;const i=stages.indexOf(e.target);if(visited.has(i))return;
+  visited.add(i);stopEls[i].classList.add('done');
+  if(visited.size===stages.length)setTimeout(()=>{say('All stages cleared!','Thanks for playing through my portfolio.',4000);confetti()},400);
+}),{rootMargin:'-40% 0px -50% 0px'});
+stages.forEach(s=>so.observe(s));
+
+/* reveals, skill bars, counters */
+const count=el=>{const n=+el.dataset.count,pre=el.dataset.pre||'',suf=el.dataset.suf||'',t0=performance.now(),d=900;
+  const f=t=>{const k=Math.min(1,(t-t0)/d),v=Math.round(n*(1-Math.pow(1-k,3)));el.textContent=pre+v+suf;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)};
+const ro=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;const t=e.target;ro.unobserve(t);t.classList.add('in');
+  t.querySelectorAll('.t i').forEach(i=>i.style.width=i.dataset.w+'%');
+  t.querySelectorAll('[data-count]').forEach(count);
+}),{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+$$('.reveal').forEach(r=>ro.observe(r));
+
+/* ---------- chests ---------- */
+const opened=new Set();
+$$('.chest').forEach(c=>c.onclick=()=>{
+  const i=+c.dataset.chest;if(opened.has(i))return;opened.add(i);
+  c.classList.add('open');c.querySelector('.txt').textContent=CHESTS[i][0];
+  $('#loot').textContent=opened.size+'/'+CHESTS.length;
+  say('Chest '+opened.size+'/4 · '+CHESTS[i][0],CHESTS[i][1],5000);
+  if(opened.size===CHESTS.length)setTimeout(confetti,300);
+});
+
+/* ---------- contact ---------- */
+$('#copy').onclick=async()=>{const m='balqisshafiraaini@gmail.com';
+  try{await navigator.clipboard.writeText(m);say('Copied!',m)}catch{location.href='mailto:'+m}};
+
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
   const C=['#ff7aa8','#ffd23f','#4aa3ff','#5cc96b','#8b6cf6','#ff9f43'];
-  for(let i=0;i<90;i++){const c=document.createElement('div');c.className='conf';c.style.left=Math.random()*100+'vw';
-    c.style.background=C[i%C.length];c.style.animationDuration=2+Math.random()*2.5+'s';c.style.animationDelay=Math.random()*.6+'s';
-    document.body.appendChild(c);setTimeout(()=>c.remove(),5500)}
-  showModal({kick:'Quest complete',title:'You explored the whole island!',sub:'Thanks for playing through my portfolio.',tone:'#bdf1ea',
-    html:`<p>You now know my story, my projects, my career levels, my skills, and my trophies${opened.size<CHESTS.length?` (there are still ${CHESTS.length-opened.size} treasure chests hiding somewhere)`:''}.</p>
-    <p>If you think I'd be a good fit for your team, the Post Office is always open.</p>
-    <div class="links" style="margin-top:14px"><a class="link" href="mailto:balqisshafiraaini@gmail.com">Email me<small>balqisshafiraaini@gmail.com</small></a>
-    <a class="link" href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" rel="noopener">Connect on LinkedIn<small>linkedin.com/in/balqishafiraini</small></a></div>`});
+  for(let i=0;i<70;i++){const c=document.createElement('div');c.className='conf';c.style.left=Math.random()*100+'vw';
+    c.style.background=C[i%C.length];c.style.animationDuration=2+Math.random()*2+'s';c.style.animationDelay=Math.random()*.5+'s';
+    document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}
 }
-
-/* ---------- title ---------- */
-let titleGone=false;const title=document.getElementById('title');
-function startGame(){if(titleGone)return;titleGone=true;title.classList.add('gone');paused=false;
-  setTimeout(()=>say('Welcome, explorer!','Follow the sandy paths to visit each building.'),500)}
-document.getElementById('start').onclick=startGame;
-document.getElementById('skip').onclick=()=>{startGame();setTimeout(openMap,200)};
-document.getElementById('hint').textContent=matchMedia('(pointer:coarse)').matches
-  ?'Tap anywhere to walk · tap a building to go inside'
-  :'Arrow keys / WASD to walk · click to move · E to enter · M for map';
-
-render();cam.x=Math.max(0,P.x-innerWidth/zoom/2);cam.y=Math.max(0,P.y-innerHeight/zoom/2);
-requestAnimationFrame(loop);
 })();
 </script>
 </body>
