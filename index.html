@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balqis Shafira Aini — Security Analyst Portfolio</title>
+<meta name="description" content="iOS Application Security Engineer | Apple WWDC Winner. Explore my portfolio as a security game.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e14;--bg2:#0d1420;--panel:#111a26;--line:#1c2a3a;
+  --green:#00ff9c;--green-dim:#00c97b;--cyan:#38d9ff;--amber:#ffb340;--red:#ff4d6d;
+  --txt:#c8d6e5;--txt-dim:#6b7f94;--white:#eef6ff;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);overflow-x:hidden}
+::selection{background:var(--green);color:#000}
+a{color:var(--cyan);text-decoration:none}
+/* scanlines + grid bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,255,156,.012) 2px 4px);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:linear-gradient(rgba(56,217,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,217,255,.04) 1px,transparent 1px);
+  background-size:44px 44px;}
+/* boot screen */
+#boot{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;transition:opacity .6s;padding:20px}
+#boot.done{opacity:0;pointer-events:none}
+.bootbox{font-family:var(--mono);font-size:14px;color:var(--green);max-width:560px;width:100%}
+.bootbox .bl{opacity:0;white-space:pre-wrap}
+.bootbox .bl.on{opacity:1}
+.bootbar{height:8px;background:var(--line);margin-top:16px;border:1px solid var(--green-dim)}
+.bootbar>div{height:100%;width:0;background:var(--green);transition:width .3s}
+.blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font-family:var(--mono)}
+nav .in{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+nav .logo{color:var(--green);font-weight:700;font-size:14px;letter-spacing:.5px}
+nav .logo b{color:var(--white)}
+nav .links{margin-left:auto;display:flex;gap:16px;font-size:12px}
+nav .links a{color:var(--txt-dim)}
+nav .links a:hover{color:var(--green)}
+/* hero */
+header{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding:100px 24px 60px}
+.hero{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;width:100%}
+.tag{font-family:var(--mono);color:var(--green);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+h1.name{font-size:clamp(34px,6vw,60px);line-height:1.05;color:var(--white);margin:14px 0 10px;font-weight:700}
+h1.name .hl{color:var(--green)}
+.role{font-family:var(--mono);color:var(--cyan);font-size:15px;margin-bottom:20px}
+.role .cursor{display:inline-block;width:9px;height:16px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+.hero p.desc{color:var(--txt-dim);line-height:1.7;max-width:520px;margin-bottom:28px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:13px}
+.btn{padding:12px 22px;border:1px solid var(--green-dim);color:var(--green);background:transparent;cursor:pointer;font-family:var(--mono);transition:.2s;position:relative;overflow:hidden}
+.btn:hover{background:var(--green);color:#000;box-shadow:0 0 24px rgba(0,255,156,.35)}
+.btn.ghost{border-color:var(--line);color:var(--txt-dim)}
+.btn.ghost:hover{background:var(--cyan);border-color:var(--cyan);color:#000;box-shadow:0 0 24px rgba(56,217,255,.3)}
+/* terminal card */
+.term{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.term .bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.term .bar i{width:11px;height:11px;border-radius:50%;display:block}
+.term .bar i:nth-child(1){background:var(--red)}.term .bar i:nth-child(2){background:var(--amber)}.term .bar i:nth-child(3){background:var(--green)}
+.term .body{font-family:var(--mono);font-size:12.5px;padding:18px;line-height:1.9;min-height:250px}
+.term .body .pr{color:var(--green)}
+.term .body .out{color:var(--txt-dim)}
+.term .body .ok{color:var(--green)}
+.term .body .warn{color:var(--amber)}
+/* sections */
+section{max-width:1100px;margin:0 auto;padding:90px 24px;position:relative;z-index:1}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:44px;font-family:var(--mono)}
+.sec-head .n{color:var(--green);font-size:14px}
+.sec-head h2{color:var(--white);font-size:clamp(22px,3.4vw,30px);font-weight:700}
+.sec-head .rule{flex:1;height:1px;background:var(--line)}
+.sec-head .cnt{font-size:12px;color:var(--txt-dim)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:60px}
+.stat{background:var(--panel);border:1px solid var(--line);padding:20px;border-radius:8px;text-align:center}
+.stat .v{font-family:var(--mono);color:var(--green);font-size:clamp(20px,3vw,30px);font-weight:700}
+.stat .l{color:var(--txt-dim);font-size:12px;margin-top:6px}
+/* threat board / projects */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;transition:.25s;overflow:hidden}
+.card:hover{border-color:var(--green-dim);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,255,156,.08)}
+.card .sev{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:14px}
+.sev.crit{background:rgba(255,77,109,.12);color:var(--red);border:1px solid rgba(255,77,109,.4)}
+.sev.high{background:rgba(255,179,64,.12);color:var(--amber);border:1px solid rgba(255,179,64,.4)}
+.sev.med{background:rgba(56,217,255,.12);color:var(--cyan);border:1px solid rgba(56,217,255,.4)}
+.sev.legend{background:rgba(0,255,156,.12);color:var(--green);border:1px solid rgba(0,255,156,.5)}
+.card h3{color:var(--white);font-size:18px;margin-bottom:4px}
+.card .meta{font-family:var(--mono);font-size:11px;color:var(--txt-dim);margin-bottom:12px}
+.card p{font-size:13.5px;color:var(--txt-dim);line-height:1.65}
+.card .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.card .tags span{font-family:var(--mono);font-size:10.5px;color:var(--cyan);background:rgba(56,217,255,.07);border:1px solid rgba(56,217,255,.2);padding:3px 9px;border-radius:4px}
+.card.legendary{border-color:rgba(0,255,156,.5);background:linear-gradient(145deg,var(--panel),rgba(0,255,156,.05))}
+.card.legendary::after{content:'★ LEGENDARY';position:absolute;top:14px;right:-32px;transform:rotate(38deg);font-family:var(--mono);font-size:9px;letter-spacing:2px;background:var(--green);color:#000;padding:4px 36px;font-weight:700}
+/* experience timeline */
+.tl{position:relative;padding-left:32px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:linear-gradient(var(--green-dim),var(--line))}
+.tl-item{position:relative;padding:0 0 40px}
+.tl-item::before{content:'';position:absolute;left:-29px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--green);box-shadow:0 0 12px rgba(0,255,156,.4)}
+.tl-item .when{font-family:var(--mono);font-size:11.5px;color:var(--green);letter-spacing:1px}
+.tl-item h3{color:var(--white);font-size:17px;margin:6px 0 2px}
+.tl-item .org{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-bottom:10px}
+.tl-item ul{list-style:none}
+.tl-item li{font-size:13.5px;color:var(--txt-dim);line-height:1.7;padding-left:16px;position:relative}
+.tl-item li::before{content:'▸';position:absolute;left:0;color:var(--green-dim)}
+.tl-item b,.card p b{color:var(--txt)}
+/* skills */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.sk{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px}
+.sk h4{font-family:var(--mono);color:var(--green);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.sk .bar-row{margin-bottom:12px}
+.sk .bar-row .lb{display:flex;justify-content:space-between;font-size:12px;color:var(--txt);margin-bottom:5px}
+.sk .bar-row .lb i{font-style:normal;color:var(--txt-dim);font-family:var(--mono);font-size:10px}
+.sk .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.sk .fill{height:100%;width:0;background:linear-gradient(90deg,var(--green-dim),var(--green));border-radius:3px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+/* about / profile */
+.about-wrap{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start}
+.photo-frame{position:relative;border:1px solid var(--green-dim);border-radius:10px;padding:10px;background:var(--panel)}
+.photo-frame::before{content:'ID_VERIFIED';position:absolute;top:-9px;left:16px;background:var(--bg);color:var(--green);font-family:var(--mono);font-size:10px;padding:0 8px;letter-spacing:1.5px}
+.photo-frame img{width:100%;display:block;border-radius:6px;filter:grayscale(35%) contrast(1.05)}
+.photo-frame .scanline{position:absolute;left:10px;right:10px;height:2px;background:var(--green);opacity:.5;animation:scan 4s linear infinite;border-radius:2px}
+@keyframes scan{0%{top:10px}50%{top:calc(100% - 12px)}100%{top:10px}}
+.about-txt p{line-height:1.8;color:var(--txt-dim);margin-bottom:16px;font-size:14.5px}
+.about-txt p b{color:var(--txt)}
+.about-txt .ach{font-family:var(--mono);font-size:12.5px;color:var(--green);line-height:2}
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 24px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--txt-dim);position:relative;z-index:1}
+footer .soc{display:flex;justify-content:center;gap:22px;margin-bottom:18px}
+footer .soc a{color:var(--txt-dim);font-size:12px}
+footer .soc a:hover{color:var(--green)}
+footer .gl{color:var(--green)}
+/* toast found */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--green);color:var(--green);padding:12px 18px;border-radius:6px;box-shadow:0 0 30px rgba(0,255,156,.25);opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+#toast.on{opacity:1;transform:translateY(0)}
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.8,.2,1)}
+.rv.on{opacity:1;transform:none}
+/* responsive */
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr;gap:32px}
+  .term{order:-1}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .about-wrap{grid-template-columns:1fr}
+  .photo-frame{max-width:280px;margin:0 auto}
+  nav .links{width:100%;justify-content:center;margin:0}
+  section{padding:64px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot"><div class="bootbox">
+<div class="bl" data-t="0">$ ./init --portfolio balqis-shafira-aini</div>
+<div class="bl" data-t="400">[<span class="ok">OK</span>] loading identity ... <span class="ok">verified</span></div>
+<div class="bl" data-t="800">[<span class="ok">OK</span>] loading modules: ios_security, wwdc22, b2b_automation</div>
+<div class="bl" data-t="1200">[<span class="warn">!!</span>] threat board: 7 vulnerabilities found. takedown in progress...</div>
+<div class="bl" data-t="1700" style="color:var(--white)">ACCESS GRANTED. welcome, analyst.</div>
+<div class="bootbar"><div id="bootfill"></div></div>
+<div class="bl" data-t="2000" style="color:var(--txt-dim)">press any key or tap to continue <span class="blink">█</span></div>
+</div></div>
+
+<nav><div class="in">
+  <span class="logo">~/<b>balqis</b>.sec</span>
+  <div class="links">
+    <a href="#about">whoami</a>
+    <a href="#threats">threat-board</a>
+    <a href="#exp">log</a>
+    <a href="#skills">skills</a>
+    <a href="#contact">contact</a>
+  </div>
+</div></nav>
+
+<!-- HERO -->
+<header>
+  <div class="hero">
+    <div>
+      <div class="tag">// security clearance: granted</div>
+      <h1 class="name">Balqis Shafira <span class="hl">Aini</span></h1>
+      <div class="role"><span id="typed"></span><span class="cursor"></span></div>
+      <p class="desc">Application Security Engineer at PT Bank Mandiri. Ex-iOS developer who spent 4+ years building banking apps — now breaking &amp; securing them. Winner of Apple WWDC22 Swift Student Challenge. Founder of PT Anoran Technology.</p>
+      <div class="cta">
+        <a class="btn" href="#threats">$ scan portfolio</a>
+        <a class="btn ghost" href="#contact">.contact()</a>
+      </div>
+    </div>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="body" id="termlines"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-head rv"><span class="n">01</span><h2>whoami</h2><div class="rule"></div><span class="cnt">analyst_profile</span></div>
+  <div class="about-wrap">
+    <div class="photo-frame rv"><div class="scanline"></div><img src="balqis.jpg" alt="Balqis Shafira Aini"></div>
+    <div class="about-txt rv">
+      <p><b>iOS Developer turned Application Security Engineer.</b> I spent 4+ years building and hardening financial-grade iOS apps for banks and fintech — LINE Bank (KEB Hana), Bank Jakarta, Pegadaian — and now I secure banking applications at scale at <b>PT Bank Mandiri</b>.</p>
+      <p>Hands-on with hardware-backed authentication (Secure Enclave, ECDSA P-256), SSL certificate pinning, runtime protection (jailbreak/debugger/Frida detection), and key rotation in production banking apps. I independently built a full passwordless MFA system end-to-end.</p>
+      <p>Beyond security: I founded <b>PT Anoran Technology</b>, where I've signed 2 large enterprise clients and built automated reporting &amp; competitor-analysis systems that run their daily operations.</p>
+      <div class="ach">▸ ★ WWDC Swift Student Challenge Winner 2022<br>▸ Cargill Global Scholar 2022–24 — 1 of 10 worldwide<br>▸ GPA 3.94/4.0 · Summa Cum Laude · Univ. of Lampung</div>
+    </div>
+  </div>
+  <div class="stats rv" style="margin-top:56px">
+    <div class="stat"><div class="v" data-count="4">0</div><div class="l">years in iOS/finance</div></div>
+    <div class="stat"><div class="v" data-count="2" data-suffix="+">0</div><div class="l">B2B enterprise clients</div></div>
+    <div class="stat"><div class="v" data-count="9" data-suffix="">0</div><div class="l">HAKI submissions</div></div>
+    <div class="stat"><div class="v" data-count="72" data-suffix="%">0</div><div class="l">cost reduction shipped</div></div>
+  </div>
+</section>
+
+<!-- THREAT BOARD = PORTFOLIO -->
+<section id="threats">
+  <div class="sec-head rv"><span class="n">02</span><h2>threat board</h2><div class="rule"></div><span class="cnt" id="found-cnt">0/6 identified</span></div>
+  <p class="rv" style="color:var(--txt-dim);font-size:13px;margin:-26px 0 34px;font-family:var(--mono)">// my projects, presented as vulnerabilities to be found. click a threat to identify it.</p>
+  <div class="board">
+    <div class="card legendary rv" data-found>
+      <span class="sev legend">SEVERITY: LEGENDARY</span>
+      <h3>Melodissimo</h3>
+      <div class="meta">SwiftUI · Apple WWDC22 · Music</div>
+      <p>Award-winning music-learning app recognized at <b>Apple WWDC22</b> — reached App Store Top 50 in Music. Built from concept through launch with SwiftUI.</p>
+      <div class="tags"><span>SwiftUI</span><span>WWDC22</span><span>App Store Top 50</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev crit">SEVERITY: CRITICAL</span>
+      <h3>MFA-App</h3>
+      <div class="meta">iOS + FastAPI · Hardware-backed auth</div>
+      <p>Full passwordless MFA system: <b>Secure Enclave</b> EC P-256, biometry-bound keys, replay prevention, jailbreak/debugger/Frida detection, SSL pinning, zero-downtime key rotation.</p>
+      <div class="tags"><span>Secure Enclave</span><span>ECDSA P-256</span><span>SSL Pinning</span><span>Anti-Frida</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev high">SEVERITY: HIGH</span>
+      <h3>LINE Bank — QRIS Overseas</h3>
+      <div class="meta">PT Bank KEB Hana · iOS · Fintech</div>
+      <p>Owned the QRIS overseas payment overhaul — cut transaction time by <b>70%</b> and reduced monthly fee-exemption gross cost by <b>72%</b>. Also shipped digital loan &amp; Korean NFC transit card.</p>
+      <div class="tags"><span>RxSwift</span><span>QRIS</span><span>NFC</span><span>MVVM</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev high">SEVERITY: HIGH</span>
+      <h3>PT Anoran Technology</h3>
+      <div class="meta">Founder · B2B Automation</div>
+      <p>Founded my own tech company. Signed <b>2 large enterprise clients</b> — built automated daily multi-store reporting and competitor analysis systems that run their operations.</p>
+      <div class="tags"><span>B2B</span><span>Automation</span><span>Consulting</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev med">SEVERITY: MEDIUM</span>
+      <h3>Enterprise ERP — IoT Sync</h3>
+      <div class="meta">Flutter · IoT · 9 HAKI</div>
+      <p>Real-time data synchronization cutting operational inefficiency by <b>30%</b>; integrated Weight Bridge &amp; GPS tracking; contributed to <b>9 HAKI</b> (IP rights) submissions.</p>
+      <div class="tags"><span>Flutter</span><span>GetX</span><span>IoT</span><span>HAKI x9</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev med">SEVERITY: MEDIUM</span>
+      <h3>Academy Apps</h3>
+      <div class="meta">Apple Developer Academy · 2.8% accept</div>
+      <p>Shipped 5 iOS projects, 2 on the App Store with <b>5.0 ratings</b> — Reeach (fintech for Gen Z), Rerupa (Vision+PencilKit drawing), Compy (storytelling programming).</p>
+      <div class="tags"><span>UIKit</span><span>Vision</span><span>PencilKit</span><span>CoreGraphics</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="exp">
+  <div class="sec-head rv"><span class="n">03</span><h2>access log</h2><div class="rule"></div><span class="cnt">career_history</span></div>
+  <div class="tl">
+    <div class="tl-item rv">
+      <div class="when">SEP 2026 — PRESENT</div>
+      <h3>Application Security Engineer</h3>
+      <div class="org">PT Bank Mandiri</div>
+      <ul><li>Securing banking applications at scale — mobile &amp; application-layer security across the bank's digital products.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">MAR 2026 — AUG 2026</div>
+      <h3>iOS Developer — New Mobile Banking App</h3>
+      <div class="org">Bank Jakarta · under PT Anoran Technology</div>
+      <ul><li>Built a new mobile banking app from scratch: QRIS, Top Up, Payment, Digital Loan, Credit Card flows.</li><li>Secure API integrations with Moya, Alamofire, SwiftProtobuf.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">NOV 2025 — MAR 2026</div>
+      <h3>iOS Developer — Tring!</h3>
+      <div class="org">Pegadaian</div>
+      <ul><li>SwiftUI + Combine + MVVM-R; 50+ tickets/month, 5+ features delivered under tight timelines.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">MAY 2024 — NOV 2025</div>
+      <h3>iOS Developer — LINE Bank</h3>
+      <div class="org">PT Bank KEB Hana Indonesia</div>
+      <ul><li>QRIS overseas payments: −70% transaction time · fee-free feature: −72% gross cost.</li><li>Digital loan feature, Korean Transportation Card (NFC e-money), RxSwift/MVVM modernization.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">2023 — PRESENT</div>
+      <h3>Founder &amp; B2B Automation Consultant</h3>
+      <div class="org">PT Anoran Technology</div>
+      <ul><li>2 large enterprise clients; automated daily multi-store reporting &amp; competitor analysis pipelines.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">JUN 2023 — NOV 2023</div>
+      <h3>Flutter Mobile Developer</h3>
+      <div class="org">PT Rindang Tigasatu Pratama</div>
+      <ul><li>Enterprise ERP, real-time IoT sync (−30% inefficiency), 9 HAKI submissions.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">FEB 2022 — DEC 2022</div>
+      <h3>iOS Developer</h3>
+      <div class="org">Apple Developer Academy · 2.8% acceptance</div>
+      <ul><li>5 projects, 2 on App Store (5.0 avg). Built Melodissimo — recognized at WWDC22.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-head rv"><span class="n">04</span><h2>skill tree</h2><div class="rule"></div><span class="cnt">loadout</span></div>
+  <div class="skill-grid">
+    <div class="sk rv"><h4>mobile-security</h4>
+      <div class="bar-row"><div class="lb"><span>Secure Enclave &amp; Keychain</span><i>92</i></div><div class="track"><div class="fill" data-w="92"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>SSL/TLS Pinning</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Runtime Protection</span><i>88</i></div><div class="track"><div class="fill" data-w="88"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>OWASP MASVS</span><i>85</i></div><div class="track"><div class="fill" data-w="85"></div></div></div>
+    </div>
+    <div class="sk rv"><h4>ios-engineering</h4>
+      <div class="bar-row"><div class="lb"><span>Swift / SwiftUI</span><i>93</i></div><div class="track"><div class="fill" data-w="93"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>UIKit / RxSwift / Combine</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>MVVM / Architecture</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Moya / Alamofire / Protobuf</span><i>87</i></div><div class="track"><div class="fill" data-w="87"></div></div></div>
+    </div>
+    <div class="sk rv"><h4>backend-&amp;-automation</h4>
+      <div class="bar-row"><div class="lb"><span>FastAPI (Python)</span><i>80</i></div><div class="track"><div class="fill" data-w="80"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>API Hardening / Rate Limiting</span><i>85</i></div><div class="track"><div class="fill" data-w="85"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>B2B Workflow Automation</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Flutter / GetX</span><i>78</i></div><div class="track"><div class="fill" data-w="78"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding-bottom:60px">
+  <div class="sec-head rv"><span class="n">05</span><h2>open a channel</h2><div class="rule"></div><span class="cnt">secure_contact</span></div>
+  <div class="term rv">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <div class="body" style="min-height:auto">
+      <div class="pr">$ handshake --invite balqis</div>
+      <div class="out">establishing secure channel...</div>
+      <div class="out">&nbsp;</div>
+      <div class="ok">▸ email&nbsp;&nbsp;&nbsp;: <a href="mailto:balqisshafiraaini@gmail.com" style="color:var(--green)">balqisshafiraaini@gmail.com</a></div>
+      <div class="ok">▸ linkedin : <a href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" style="color:var(--green)">linkedin.com/in/balqishafiraini</a></div>
+      <div class="ok">▸ github&nbsp;&nbsp;&nbsp;: <a href="https://github.com/balqishafiraini" target="_blank" style="color:var(--green)">github.com/balqishafiraini</a></div>
+      <div class="ok">▸ medium&nbsp;&nbsp;&nbsp;: <a href="https://balqishafiraini.medium.com/" target="_blank" style="color:var(--green)">balqishafiraini.medium.com</a></div>
+      <div class="out" style="margin-top:10px">status: <span class="warn">OPEN TO REMOTE OPPORTUNITIES (WFH)</span> <span class="blink">█</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="soc">
+    <a href="https://www.linkedin.com/in/balqishafiraini/" target="_blank">linkedin</a>
+    <a href="https://github.com/balqishafiraini" target="_blank">github</a>
+    <a href="https://balqishafiraini.medium.com/" target="_blank">medium</a>
+  </div>
+  <div>© 2026 Balqis Shafira Aini · <span class="gl">no vulnerabilities were harmed</span> in the making of this site</div>
+</footer>
+
+<div id="toast">🔓 THREAT IDENTIFIED — <span id="toast-txt"></span></div>
+
+<script>
+// boot
+const boot=document.getElementById('boot');
+function endBoot(){boot.classList.add('done')}
+document.querySelectorAll('.bl').forEach(el=>setTimeout(()=>el.classList.add('on'),+el.dataset.t));
+let f=0;const iv=setInterval(()=>{f+=20;document.getElementById('bootfill').style.width=f+'%';if(f>=100)clearInterval(iv)},340);
+setTimeout(()=>{endBoot()},2600);
+boot.addEventListener('click',endBoot);
+window.addEventListener('keydown',endBoot,{once:true});
+
+// typing role
+const roles=['Application Security Engineer','iOS Developer','Apple WWDC22 Winner','B2B Automation Consultant','Secure Enclave Enthusiast'];
+const tEl=document.getElementById('typed');let ri=0,ci=0,del=false;
+(function type(){const r=roles[ri];tEl.textContent=r.slice(0,ci);
+  if(!del&&ci<r.length){ci++;setTimeout(type,55)}
+  else if(!del){del=true;setTimeout(type,1800)}
+  else if(ci>0){ci--;setTimeout(type,28)}
+  else{del=false;ri=(ri+1)%roles.length;setTimeout(type,300)}})();
+
+// hero terminal
+const lines=[
+  ['pr','$ whoami'],
+  ['out','balqis — appsec @ Bank Mandiri · ex-iOS @ LINE Bank'],
+  ['pr','$ nmap portfolio.local'],
+  ['ok','22/wwdc22   open  [winner]'],
+  ['ok','443/secure-enclave  open  [hardened]'],
+  ['ok','8080/anoran-b2b     open  [2 clients]'],
+  ['warn','1337/easter-egg     open  [keep scanning ↓]'],
+  ['pr','$ cat mission.txt'],
+  ['out','"securing banking apps at scale."'],
+];
+const tb=document.getElementById('termlines');let li=0;
+(function nl(){if(li>=lines.length)return;const[c,t]=lines[li++];const d=document.createElement('div');d.className=c;d.textContent=t;tb.appendChild(d);setTimeout(nl,c==='pr'?350:180)})();
+
+// scroll reveal + counters + skill bars
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('on');
+  e.target.querySelectorAll('.fill').forEach(fl=>fl.style.width=fl.dataset.w+'%');
+  e.target.querySelectorAll('.v[data-count]').forEach(v=>{if(v.dataset.done)return;v.dataset.done=1;
+    const end=+v.dataset.count,sfx=v.dataset.suffix||'';let n=0;const step=Math.max(1,Math.round(end/40));
+    const t=setInterval(()=>{n+=step;if(n>=end){n=end;clearInterval(t)}v.textContent=n+sfx},30)});
+  io.unobserve(e.target)})},{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// threat board interaction
+let found=0;const total=document.querySelectorAll('.card[data-found]').length;
+const cnt=document.getElementById('found-cnt'),toast=document.getElementById('toast'),ttx=document.getElementById('toast-txt');
+document.querySelectorAll('.card[data-found]').forEach(c=>{c.style.cursor='pointer';
+  c.addEventListener('click',()=>{if(c.dataset.hit)return;c.dataset.hit=1;found++;
+    cnt.textContent=found+'/'+total+' identified';
+    ttx.textContent=c.querySelector('h3').textContent;
+    toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2200);
+    if(found===total){setTimeout(()=>{ttx.textContent='ALL THREATS IDENTIFIED — you found my whole portfolio 🏆';toast.classList.add('on')},2400)}})});
+</script>
+</body>
+</html>
