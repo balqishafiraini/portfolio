@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Shasha Island — Portfolio Game</title>
-<meta name="description" content="Explore Shasha's portfolio as a little island adventure. iOS developer growing into security at Bank Mandiri, Apple WWDC22 winner, passionate builder.">
+<meta name="description" content="Explore Shasha's portfolio as a little island adventure. iOS developer and builder, now working in application security at Bank Mandiri. Apple WWDC22 winner.">
 <link rel="icon" href="images/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -316,8 +316,8 @@ details[open] summary::before{content:'\2212'}
     <div>
       <div class="k">A tiny portfolio adventure</div>
       <h1>Welcome to <span>Shasha</span> Island</h1>
-      <div class="full">Balqis Shafira Aini · iOS Developer growing into Security</div>
-      <p>I’m a passionate builder: 3 years building iOS apps for banks, now growing into security at Bank Mandiri — building an Authenticator SDK from zero. Walk around the island and step into each building to see my story, projects, career, and skills. Find all 6 places and the 4 hidden treasure chests.</p>
+      <div class="full">Balqis Shafira Aini · iOS Developer → Application Security</div>
+      <p>I build things. For 3 years that meant iOS apps for banks. Now I'm on the security side at Bank Mandiri, building an Authenticator SDK from scratch. Walk around the island and step into each building to see my story, projects, career, and skills. Find all 6 places and the 4 hidden treasure chests.</p>
       <div class="how" id="how"></div>
       <button class="big" id="start">Start exploring</button>
       <button class="skip" id="skip">Skip the game, show me the menu</button>
@@ -366,15 +366,15 @@ const QUESTS=[
   wins:['WWDC22 winner','App Store Top 50 Music'],
   log:{Built:'My first Swift Playground and my first SwiftUI project, from concept to submission.',Result:'Apple selected it as a winning WWDC22 Swift Student Challenge submission, and it later reached the App Store Top 50 in Music.'},
   tags:['SwiftUI','Swift Playgrounds']},
- {f:'sec',r:['epic','Epic'],t:'Authenticator SDK (in the works)',who:'PT Bank Mandiri · Division initiative · from 0 to 1',
-  sum:'My current quest: building an Authenticator SDK from zero · ideation to development · to bring app protection to the bank\'s internal apps.',
-  wins:['From 0 to 1','The quest I\'m on right now'],
-  log:{Problem:'The bank\'s internal apps need a shared, hardware-backed way to authenticate · instead of every team building their own.',Built:['Shaping the SDK from ideation: scoping, design, and the iOS implementation','Part of a division initiative, not a user request · we pitched it and are building it','My iOS background carries the build; my security craft grows every day'],Result:'In development · watch this space.'},
+ {f:'sec',r:['epic','Epic'],t:'Authenticator SDK (in progress)',who:'PT Bank Mandiri · Division initiative',
+  sum:'An SDK that gives the bank\'s internal apps one shared, secure way to log users in. I\'m building it from scratch, from the first idea to working code.',
+  wins:['Built from zero','Current quest'],
+  log:{Problem:'Each internal app handles login on its own. The bank needs one hardware-backed way to do it that every team can reuse.',Built:['Turned the idea into a plan: scope, design and SDK structure','Writing the iOS implementation, where my 3 years of iOS work pays off','Our division started this ourselves. Nobody asked for it, we saw the need'],Result:'Still in development.'},
   tags:['iOS SDK','AppSec','From 0 to 1']},
- {f:'sec',r:['epic','Epic'],t:'MFA-App: passwordless login',who:'Personal deep-dive · iOS + FastAPI · got me my AppSec role',
-  sum:'A complete passwordless multi-factor login system, built by myself end to end. This project is what got me my current AppSec role.',
-  wins:['Solo, end to end','My ticket into security'],
-  log:{Problem:'Passwords and SMS OTP are easy to phish or intercept, and banks need login that is tied to the real device and the real person.',Built:['Login keys created inside the iPhone\'s Secure Enclave (EC P-256) so the private key never leaves the chip','Keys locked behind Face ID / Touch ID; the server sends a challenge and the phone signs it (ECDSA)','Replay prevention so a captured request can\'t be reused','Jailbreak, debugger and Frida detection, plus SSL certificate pinning','Key rotation without downtime'],Result:'A working reference implementation · and my deep-dive into mobile security that led to my AppSec role at Bank Mandiri.'},
+ {f:'sec',r:['epic','Epic'],t:'MFA-App: passwordless login',who:'Personal project · iOS + FastAPI',
+  sum:'A complete passwordless multi-factor login system, built by myself end to end. It\'s how I learned mobile security, and it\'s what got me my AppSec role.',
+  wins:['Solo, end to end','Got me into security'],
+  log:{Problem:'Passwords and SMS OTP are easy to phish or intercept, and banks need login that is tied to the real device and the real person.',Built:['Login keys created inside the iPhone\'s Secure Enclave (EC P-256) so the private key never leaves the chip','Keys locked behind Face ID / Touch ID; the server sends a challenge and the phone signs it (ECDSA)','Replay prevention so a captured request can\'t be reused','Jailbreak, debugger and Frida detection, plus SSL certificate pinning','Key rotation without downtime'],Result:'A working reference implementation of the protections banking apps use, and the project that got me hired at Bank Mandiri.'},
   tags:['Secure Enclave','ECDSA P-256','SSL pinning','FastAPI']},
  {f:'bank',r:['epic','Epic'],t:'LINE Bank: QRIS overseas',who:'PT Bank KEB Hana Indonesia · iOS',
   sum:'Let LINE Bank customers pay by scanning QRIS codes abroad. I owned the iOS side of the payment overhaul.',
@@ -418,7 +418,7 @@ const QUESTS=[
   tags:['iOS','Travel']}
 ];
 const LEVELS=[
- [1,'Sep 2026 — now','Application Security Engineer','PT Bank Mandiri','Building an Authenticator SDK from zero (division initiative, ideation to development) to protect the bank\'s internal apps. Growing my security craft every day.'],
+ [1,'Sep 2026 — now','Application Security Engineer','PT Bank Mandiri','Building an Authenticator SDK from scratch so the bank\'s internal apps share one secure login. My first security role.'],
  [0,'Mar 2026 — Aug 2026','iOS Developer, new mobile banking app','Bank Jakarta · via PT Anoran Technology','Built a new banking app from scratch.',['QRIS, top up, payment, digital loan, credit card','Secure API integration with Moya, Alamofire, SwiftProtobuf']],
  [0,'Nov 2025 — Mar 2026','iOS Developer, Tring!','Pegadaian','Fast feature delivery on a SwiftUI app.',['SwiftUI + Combine + MVVM-R','50+ tickets a month, 5+ features under tight timelines']],
  [0,'May 2024 — Nov 2025','iOS Developer, LINE Bank','PT Bank KEB Hana Indonesia','Owned payment features used by bank customers.',['QRIS overseas payments: −70% transaction time','Fee-free feature: −72% monthly gross cost','Digital loan, Korean transit card (NFC), RxSwift/MVVM modernization']],
@@ -427,13 +427,13 @@ const LEVELS=[
  [0,'Feb 2022 — Dec 2022','iOS Developer (Academy)','Apple Developer Academy','Where I became an iOS developer. 2.8% acceptance rate.',['5 projects, 2 on the App Store with 5.0 ratings','Built Melodissimo, a WWDC22 winner']]
 ];
 const SKILLS=[
- ['Mobile Security (growing)','#ff7aa8','My new craft — built on a strong iOS foundation.',[['Secure Enclave & Keychain',72],['SSL/TLS pinning',70],['Runtime protection (jailbreak, Frida)',65],['OWASP MASVS',60]]],
- ['iOS Engineering (core strength)','#4aa3ff','Building the apps themselves.',[['Swift / SwiftUI',93],['UIKit / RxSwift / Combine',90],['MVVM architecture',90],['Networking (Moya, Protobuf)',87]]],
+ ['Mobile Security','#ff7aa8','Newer skill, still leveling up.',[['Secure Enclave & Keychain',72],['SSL/TLS pinning',70],['Runtime protection (jailbreak, Frida)',65],['OWASP MASVS',60]]],
+ ['iOS Engineering','#4aa3ff','My strongest skill. Building the apps themselves.',[['Swift / SwiftUI',93],['UIKit / RxSwift / Combine',90],['MVVM architecture',90],['Networking (Moya, Protobuf)',87]]],
  ['Backend & Automation','#5cc96b','The systems behind the app.',[['Business workflow automation',90],['API hardening',85],['Python / FastAPI',80],['Flutter / GetX',78]]]
 ];
 const FACTS=[
  ['First job ever?','Selling K-pop merch. I shipped thousands of orders to Korea, Japan, France, the UK and more, with 3 people helping me.'],
- ['Fun fact','I didn\'t think I was good at logic or math before I joined an IT major. Now I build security features for banking apps.'],
+ ['Fun fact','I didn\'t think I was good at logic or math before I joined an IT major. Now I build apps for banks and work on keeping them secure.'],
  ['Side quest','Before tech, I led my school\'s science writing club of 30+ students and headed the design division of a school olympiad.'],
  ['Writer mode','I also write on Medium, including a post on Apple\'s Vision contour detection, the tech behind Rerupa.']
 ];
@@ -441,18 +441,18 @@ const FACTS=[
 const logHtml=l=>'<dl class="log">'+Object.entries(l).map(([k,v])=>`<dt>${k==='Built'?'What I did':k}</dt><dd>${Array.isArray(v)?'<ul>'+v.map(x=>`<li>${x}</li>`).join('')+'</ul>':v}</dd>`).join('')+'</dl>';
 const PLACES=[
  {id:'home',name:"Shasha's House",x:830,y:300,w:260,h:210,roof:'#ff7aa8',wall:'#fff1f5',tone:'#ffc4d8',wins:2,
-  kick:'Place 1 · About me',title:'Hi, I\'m Shasha!',sub:'iOS developer growing into security — passionate builder.',
+  kick:'Place 1 · About me',title:'Hi, I\'m Shasha!',sub:'iOS developer and builder, now working in security.',
   body:()=>`<div class="about">
    <div class="polaroid"><img src="images/shasha-portrait.webp" alt="Shasha" width="600" height="800"><span>that's me</span></div>
    <div>
-    <p class="lead">I started as an iOS developer making financial apps, got curious about how attackers break them, and now I\'m growing into security as an <b>Application Security Engineer at PT Bank Mandiri</b> — building an Authenticator SDK from zero (ideation to development) to protect the bank\'s internal apps.</p>
-    <p>Before that I spent 3 years shipping iOS features for LINE Bank (KEB Hana), Bank Jakarta and Pegadaian. On the side I run my own company, <b>PT Anoran Technology</b>, which automates daily work for businesses. What drives me: I\'m a <b>passionate builder</b> · give me a problem and I\'ll prototype, ship, and iterate.</p>
+    <p class="lead">I started as an iOS developer making financial apps, got curious about how attackers break them, and now work as an <b>Application Security Engineer at PT Bank Mandiri</b>. Right now I'm building an Authenticator SDK for the bank's internal apps, from scratch.</p>
+    <p>Before that I spent 3 years shipping iOS features for LINE Bank (KEB Hana), Bank Jakarta and Pegadaian. On the side I run my own company, <b>PT Anoran Technology</b>, which automates daily work for businesses. What ties it all together: I like <b>building things</b>. Give me a problem and I'll make something that works, ship it, then make it better.</p>
     <div class="chips"><span class="chip">Apple WWDC22 Winner</span><span class="chip">Cargill Global Scholar</span><span class="chip">Summa Cum Laude · GPA 3.94</span><span class="chip">Indonesian &amp; English</span><span class="chip">Open to remote work</span></div>
    </div></div>
    <div class="classes">
-    <div class="cls"><h3>Security Engineer (growing)</h3><div class="role">Main class · Bank Mandiri</div><p>New craft, learning fast: my team is building an Authenticator SDK from zero to protect the bank's internal apps, and my MFA deep-dive covers hardware-backed login (Secure Enclave), certificate pinning, and jailbreak/debugger/Frida detection.</p></div>
-    <div class="cls"><h3>iOS Developer</h3><div class="role">3 years · banks and fintech</div><p>Features used by real bank customers: QRIS payments at home and abroad, digital loans, credit cards, and an NFC transit card. Swift, SwiftUI, UIKit, RxSwift, Combine — and a builder's habit: prototype, ship, iterate.</p></div>
-    <div class="cls"><h3>Founder</h3><div class="role">PT Anoran Technology</div><p>I founded it and run it: automated daily multi-store sales reports and competitor tracking for 2 large enterprise clients, so their teams stop doing it by hand.</p></div>
+    <div class="cls"><h3>Security Engineer</h3><div class="role">Main class · Bank Mandiri · new, leveling up</div><p>I'm building an Authenticator SDK for the bank's internal apps. Before that I taught myself mobile security by building my own MFA app: Secure Enclave login, certificate pinning, and jailbreak, debugger and Frida detection.</p></div>
+    <div class="cls"><h3>iOS Developer</h3><div class="role">3 years · banks and fintech</div><p>Features used by real bank customers: QRIS payments at home and abroad, digital loans, credit cards, and an NFC transit card. Swift, SwiftUI, UIKit, RxSwift, Combine.</p></div>
+    <div class="cls"><h3>Founder</h3><div class="role">PT Anoran Technology</div><p>My own company. We automate daily work for 2 enterprise clients, like multi-store sales reports and competitor tracking, so their teams stop doing it by hand.</p></div>
    </div>
    <div class="stats">
     <div class="stat"><b>3</b><small>years iOS in finance</small></div>
@@ -476,7 +476,7 @@ const PLACES=[
   body:()=>'<div class="chapters">'+LEVELS.map((c,i)=>`<div class="ch ${c[0]?'now':''}"><div class="lv"><div><small>LEVEL</small><b>${LEVELS.length-i}</b></div></div><div><div class="when">${c[1]}${c[0]?' · current':''}</div><h3>${c[2]}</h3><div class="org">${c[3]}</div><p class="sum">${c[4]}</p>${c[5]?`<ul>${c[5].map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div></div>`).join('')+'</div>'},
  {id:'dojo',name:'Skill Dojo',x:1560,y:800,w:290,h:210,roof:'#ff9f43',wall:'#fff3e3',tone:'#ffd9b0',wins:2,
   kick:'Place 4 · Skills',title:'Character Sheet',sub:'My stats after years of training.',
-  body:()=>`<div class="classcard"><img src="images/shasha-face.jpg" alt=""><div><b>Class: Builder (main) · Security Engineer (growing)</b>Subclass: iOS Developer · Special move: shipping fast</div></div>
+  body:()=>`<div class="classcard"><img src="images/shasha-face.jpg" alt=""><div><b>Class: Builder</b>Subclass: iOS Developer, Security Engineer · Special move: shipping fast</div></div>
    <div class="sheet-row">${SKILLS.map(g=>`<div class="skillbox" style="--c:${g[1]}"><h4>${g[0]}</h4><p>${g[2]}</p>${g[3].map(s=>`<div class="sb"><div class="lb"><span>${s[0]}</span><span>${s[1]}</span></div><div class="tr"><i data-w="${s[1]}"></i></div></div>`).join('')}</div>`).join('')}</div>
    <p class="note">Self-assessed levels.</p>`},
  {id:'post',name:'Post Office',x:620,y:1060,w:250,h:190,roof:'#2ec4b6',wall:'#e6fbf8',tone:'#bdf1ea',wins:2,door:'#d9534f',
