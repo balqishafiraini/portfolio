@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shasha — Security Analyst Portfolio</title>
-<meta name="description" content="iOS Application Security Engineer | Apple WWDC Winner. Explore my portfolio as a security game.">
+<meta name="description" content="iOS Developer growing into security — Application Security Engineer at Bank Mandiri. Apple WWDC Winner. Passionate builder.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -183,7 +183,7 @@ footer .gl{color:var(--green)}
       <div class="fullname">Balqis Shafira Aini</div>
       <h1 class="name"><span class="hl">Shasha</span></h1>
       <div class="role"><span id="typed"></span><span class="cursor"></span></div>
-      <p class="desc">Application Security Engineer at PT Bank Mandiri. Ex-iOS developer who spent 4+ years building banking apps — now breaking &amp; securing them. Winner of Apple WWDC22 Swift Student Challenge. Founder of PT Anoran Technology.</p>
+      <p class="desc">iOS Developer (3 yrs) now growing into security as an <b>Application Security Engineer</b> at PT Bank Mandiri — currently building an Authenticator SDK from zero to protect the bank's internal apps. Winner of Apple WWDC22 Swift Student Challenge. Founder of PT Anoran Technology.</p>
       <div class="cta">
         <a class="btn" href="#threats">$ scan portfolio</a>
         <a class="btn ghost" href="#contact">.contact()</a>
@@ -202,14 +202,14 @@ footer .gl{color:var(--green)}
   <div class="about-wrap">
     <div class="photo-frame rv"><div class="scanline"></div><img src="balqis.jpg" alt="Shasha"></div>
     <div class="about-txt rv">
-      <p><b>iOS Developer turned Application Security Engineer.</b> I spent 4+ years building and hardening financial-grade iOS apps for banks and fintech — LINE Bank (KEB Hana), Bank Jakarta, Pegadaian — and now I secure banking applications at scale at <b>PT Bank Mandiri</b>.</p>
-      <p>Hands-on with hardware-backed authentication (Secure Enclave, ECDSA P-256), SSL certificate pinning, runtime protection (jailbreak/debugger/Frida detection), and key rotation in production banking apps. I independently built a full passwordless MFA system end-to-end.</p>
-      <p>Beyond security: I founded <b>PT Anoran Technology</b>, where I've signed 2 large enterprise clients and built automated reporting &amp; competitor-analysis systems that run their daily operations.</p>
+      <p><b>iOS Developer (3 yrs) growing into security.</b> I spent 3 years building financial-grade iOS apps for banks and fintech — LINE Bank (KEB Hana), Bank Jakarta, Pegadaian — and recently stepped into security as an <b>Application Security Engineer at PT Bank Mandiri</b>.</p>
+      <p>My security journey is hands-on: as part of a division initiative, my team is building an <b>Authenticator SDK from zero</b> (ideation to development) to protect the bank's internal apps. Before that, I built a full passwordless MFA system end-to-end (Secure Enclave, ECDSA P-256, SSL pinning, runtime protection) as my deep-dive into mobile security.</p>
+      <p>What drives me: <b>I'm a passionate builder.</b> Give me a problem, I'll prototype, ship, and iterate. From banking features used by millions, to my own PT that automates enterprise operations for 2 large clients.</p>
       <div class="ach">▸ ★ WWDC Swift Student Challenge Winner 2022<br>▸ Cargill Global Scholar 2022–24 — 1 of 10 worldwide<br>▸ GPA 3.94/4.0 · Summa Cum Laude · Univ. of Lampung</div>
     </div>
   </div>
   <div class="stats rv" style="margin-top:56px">
-    <div class="stat"><div class="v" data-count="4">0</div><div class="l">years in iOS/finance</div></div>
+    <div class="stat"><div class="v" data-count="3">0</div><div class="l">years in iOS</div></div>
     <div class="stat"><div class="v" data-count="2" data-suffix="+">0</div><div class="l">B2B enterprise clients</div></div>
     <div class="stat"><div class="v" data-count="9" data-suffix="">0</div><div class="l">HAKI submissions</div></div>
     <div class="stat"><div class="v" data-count="72" data-suffix="%">0</div><div class="l">cost reduction shipped</div></div>
@@ -218,9 +218,16 @@ footer .gl{color:var(--green)}
 
 <!-- THREAT BOARD = PORTFOLIO -->
 <section id="threats">
-  <div class="sec-head rv"><span class="n">02</span><h2>threat board</h2><div class="rule"></div><span class="cnt" id="found-cnt">0/6 identified</span></div>
+  <div class="sec-head rv"><span class="n">02</span><h2>threat board</h2><div class="rule"></div><span class="cnt" id="found-cnt">0/7 identified</span></div>
   <p class="rv" style="color:var(--txt-dim);font-size:13px;margin:-26px 0 34px;font-family:var(--mono)">// my projects, presented as vulnerabilities to be found. click a threat to identify it.</p>
   <div class="board">
+    <div class="card rv" data-found>
+      <span class="sev crit">SEVERITY: CRITICAL</span>
+      <h3>Authenticator SDK</h3>
+      <div class="meta">Bank Mandiri · In development · Division initiative</div>
+      <p>My current mission: building an <b>Authenticator SDK from zero</b> — from ideation to development — to bring hardware-backed authentication and app protection to the bank's internal apps. The project I'm most excited about right now.</p>
+      <div class="tags"><span>iOS SDK</span><span>AppSec</span><span>From 0 to 1</span></div>
+    </div>
     <div class="card legendary rv" data-found>
       <span class="sev legend">SEVERITY: LEGENDARY</span>
       <h3>Melodissimo</h3>
@@ -231,8 +238,8 @@ footer .gl{color:var(--green)}
     <div class="card rv" data-found>
       <span class="sev crit">SEVERITY: CRITICAL</span>
       <h3>MFA-App</h3>
-      <div class="meta">iOS + FastAPI · Hardware-backed auth</div>
-      <p>Full passwordless MFA system: <b>Secure Enclave</b> EC P-256, biometry-bound keys, replay prevention, jailbreak/debugger/Frida detection, SSL pinning, zero-downtime key rotation.</p>
+      <div class="meta">iOS + FastAPI · Personal deep-dive project</div>
+      <p>My deep-dive into mobile security: a full passwordless MFA system built end-to-end — <b>Secure Enclave</b> EC P-256, biometry-bound keys, replay prevention, jailbreak/debugger detection, SSL pinning, key rotation. This project is what got me my current AppSec role.</p>
       <div class="tags"><span>Secure Enclave</span><span>ECDSA P-256</span><span>SSL Pinning</span><span>Anti-Frida</span></div>
     </div>
     <div class="card rv" data-found>
@@ -274,7 +281,7 @@ footer .gl{color:var(--green)}
       <div class="when">SEP 2026 — PRESENT</div>
       <h3>Application Security Engineer</h3>
       <div class="org">PT Bank Mandiri</div>
-      <ul><li>Securing banking applications at scale — mobile &amp; application-layer security across the bank's digital products.</li></ul>
+      <ul><li>Building an <b>Authenticator SDK from zero</b> (division initiative) — from ideation to development — to protect the bank's internal apps. Growing my security craft every day.</li></ul>
     </div>
     <div class="tl-item rv">
       <div class="when">MAR 2026 — AUG 2026</div>
@@ -319,13 +326,13 @@ footer .gl{color:var(--green)}
 <section id="skills">
   <div class="sec-head rv"><span class="n">04</span><h2>skill tree</h2><div class="rule"></div><span class="cnt">loadout</span></div>
   <div class="skill-grid">
-    <div class="sk rv"><h4>mobile-security</h4>
-      <div class="bar-row"><div class="lb"><span>Secure Enclave &amp; Keychain</span><i>92</i></div><div class="track"><div class="fill" data-w="92"></div></div></div>
-      <div class="bar-row"><div class="lb"><span>SSL/TLS Pinning</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
-      <div class="bar-row"><div class="lb"><span>Runtime Protection</span><i>88</i></div><div class="track"><div class="fill" data-w="88"></div></div></div>
-      <div class="bar-row"><div class="lb"><span>OWASP MASVS</span><i>85</i></div><div class="track"><div class="fill" data-w="85"></div></div></div>
+    <div class="sk rv"><h4>mobile-security (growing)</h4>
+      <div class="bar-row"><div class="lb"><span>Secure Enclave &amp; Keychain</span><i>72</i></div><div class="track"><div class="fill" data-w="72"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>SSL/TLS Pinning</span><i>70</i></div><div class="track"><div class="fill" data-w="70"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Runtime Protection</span><i>65</i></div><div class="track"><div class="fill" data-w="65"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>OWASP MASVS</span><i>60</i></div><div class="track"><div class="fill" data-w="60"></div></div></div>
     </div>
-    <div class="sk rv"><h4>ios-engineering</h4>
+    <div class="sk rv"><h4>ios-engineering (core strength)</h4>
       <div class="bar-row"><div class="lb"><span>Swift / SwiftUI</span><i>93</i></div><div class="track"><div class="fill" data-w="93"></div></div></div>
       <div class="bar-row"><div class="lb"><span>UIKit / RxSwift / Combine</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
       <div class="bar-row"><div class="lb"><span>MVVM / Architecture</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
@@ -380,7 +387,7 @@ boot.addEventListener('click',endBoot);
 window.addEventListener('keydown',endBoot,{once:true});
 
 // typing role
-const roles=['Application Security Engineer','iOS Developer','Apple WWDC22 Winner','B2B Automation Consultant','Secure Enclave Enthusiast'];
+const roles=['iOS Developer','Passionate Builder','AppSec (growing)','Apple WWDC22 Winner','B2B Automation Consultant'];
 const tEl=document.getElementById('typed');let ri=0,ci=0,del=false;
 (function type(){const r=roles[ri];tEl.textContent=r.slice(0,ci);
   if(!del&&ci<r.length){ci++;setTimeout(type,55)}
@@ -391,14 +398,14 @@ const tEl=document.getElementById('typed');let ri=0,ci=0,del=false;
 // hero terminal
 const lines=[
   ['pr','$ whoami'],
-  ['out','shasha — appsec @ Bank Mandiri · ex-iOS @ LINE Bank'],
+  ['out','shasha — iOS dev → appsec @ Bank Mandiri · builder'],
   ['pr','$ nmap portfolio.local'],
   ['ok','22/wwdc22   open  [winner]'],
   ['ok','443/secure-enclave  open  [hardened]'],
   ['ok','8080/anoran-b2b     open  [2 clients]'],
   ['warn','1337/easter-egg     open  [keep scanning ↓]'],
   ['pr','$ cat mission.txt'],
-  ['out','"securing banking apps at scale."'],
+  ['out','"build things that matter. secure them well."'],
 ];
 const tb=document.getElementById('termlines');let li=0;
 (function nl(){if(li>=lines.length)return;const[c,t]=lines[li++];const d=document.createElement('div');d.className=c;d.textContent=t;tb.appendChild(d);setTimeout(nl,c==='pr'?350:180)})();
