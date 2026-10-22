@@ -2,710 +2,432 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Shasha Island — Portfolio Game</title>
-<meta name="description" content="Explore Shasha's portfolio as a little island adventure. Application Security Engineer, ex-iOS developer, Apple WWDC22 winner.">
-<link rel="icon" href="images/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shasha — Security Analyst Portfolio</title>
+<meta name="description" content="iOS Developer growing into security — Application Security Engineer at Bank Mandiri. Apple WWDC Winner. Passionate builder.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#2b2440;--ink-soft:#5b5372;--paper:#fffaf0;--paper2:#fff3dc;
-  --pink:#ff7aa8;--purple:#8b6cf6;--blue:#4aa3ff;--orange:#ff9f43;--yellow:#ffd23f;--green:#5cc96b;--teal:#2ec4b6;
-  --grass:#9bd770;--grass2:#8acb5f;--sand:#f4dfa6;--water:#6cc6e8;--water2:#5ab8de;
-  --head:'Fredoka',system-ui,sans-serif;--body:'Nunito',system-ui,sans-serif;
-  --shadow:0 4px 0 var(--ink);
+  --bg:#0a0e14;--bg2:#0d1420;--panel:#111a26;--line:#1c2a3a;
+  --green:#00ff9c;--green-dim:#00c97b;--cyan:#38d9ff;--amber:#ffb340;--red:#ff4d6d;
+  --txt:#c8d6e5;--txt-dim:#6b7f94;--white:#eef6ff;
+  --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;background:var(--water);font-family:var(--body);color:var(--ink);-webkit-tap-highlight-color:transparent}
-button{font-family:inherit;cursor:pointer}
-a{color:inherit}
-
-/* ---------- viewport & world ---------- */
-#viewport{position:fixed;inset:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
-#world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;
-  background:
-    radial-gradient(ellipse 60px 8px at 50% 50%,rgba(255,255,255,.35),transparent 70%) 0 0/220px 120px,
-    radial-gradient(ellipse 40px 6px at 50% 50%,rgba(255,255,255,.25),transparent 70%) 110px 60px/220px 120px,
-    var(--water)}
-.island{position:absolute;border-radius:220px;background:var(--sand);box-shadow:0 0 0 14px rgba(255,255,255,.45),0 0 0 30px rgba(255,255,255,.15)}
-.island::after{content:'';position:absolute;inset:34px;border-radius:190px;
-  background:radial-gradient(circle at 20% 30%,var(--grass2) 0 2px,transparent 3px) 0 0/46px 46px,
-             radial-gradient(circle at 70% 80%,var(--grass2) 0 2px,transparent 3px) 0 0/58px 58px,var(--grass)}
-svg.paths{position:absolute;left:0;top:0;pointer-events:none;z-index:1}
-.pond{position:absolute;border-radius:50%;background:var(--water);box-shadow:inset 0 6px 0 rgba(0,0,0,.08),0 0 0 8px var(--sand);z-index:2}
-.pond::after{content:'';position:absolute;left:30%;top:35%;width:40px;height:6px;border-radius:6px;background:rgba(255,255,255,.55)}
-.flower{position:absolute;width:8px;height:8px;border-radius:50%;z-index:2;box-shadow:0 0 0 3px rgba(255,255,255,.75)}
-
-/* entities share depth sorting through z-index set in JS */
-.ent{position:absolute}
-
-/* trees */
-.tree{width:84px;height:104px;pointer-events:none}
-.tree .crown{position:absolute;left:0;top:0;width:84px;height:76px;border-radius:50%;background:#4fae4f;box-shadow:inset -10px -10px 0 #3f9443,0 4px 0 rgba(0,0,0,.12)}
-.tree .crown::before{content:'';position:absolute;left:14px;top:10px;width:26px;height:18px;border-radius:50%;background:rgba(255,255,255,.22)}
-.tree .trunk{position:absolute;left:34px;top:64px;width:16px;height:36px;background:#9b6a43;border-radius:4px}
-.tree.pine .crown{border-radius:50% 50% 46% 46%/60% 60% 40% 40%;background:#3f9e6a;box-shadow:inset -10px -10px 0 #328457}
-.tree.blossom .crown{background:#ffb3cf;box-shadow:inset -10px -10px 0 #f58fb5}
-.tree::after{content:'';position:absolute;left:18px;bottom:-6px;width:48px;height:12px;border-radius:50%;background:rgba(0,0,0,.14);z-index:-1}
-
-/* buildings */
-.bld{cursor:pointer}
-.bld .roof{position:absolute;left:-8%;width:116%;top:0;background:var(--roof);clip-path:polygon(50% 0,100% 100%,0 100%);filter:drop-shadow(0 4px 0 rgba(0,0,0,.15))}
-.bld .roof::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 3px,transparent 3px 16px)}
-.bld .wall{position:absolute;left:0;right:0;bottom:0;background:var(--wall);border-radius:6px 6px 4px 4px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 6px 0 rgba(0,0,0,.12)}
-.bld .win{position:absolute;width:34px;height:30px;background:#bfe9ff;border:5px solid #fff;border-radius:6px;box-shadow:inset 0 -8px 0 rgba(74,163,255,.25)}
-.bld .door{position:absolute;bottom:0;left:50%;width:44px;height:58px;margin-left:-22px;background:var(--door,#8a5a3b);border-radius:22px 22px 0 0;box-shadow:inset -6px 0 0 rgba(0,0,0,.15)}
-.bld .door::after{content:'';position:absolute;right:9px;top:30px;width:6px;height:6px;border-radius:50%;background:var(--yellow)}
-.bld .label{position:absolute;left:50%;bottom:-46px;transform:translateX(-50%);white-space:nowrap;font-family:var(--head);font-weight:600;font-size:17px;
-  background:var(--paper);border:3px solid var(--ink);border-radius:12px;padding:3px 12px;box-shadow:0 3px 0 var(--ink)}
-.bld .prompt{position:absolute;left:50%;top:-58px;transform:translate(-50%,8px);white-space:nowrap;font-family:var(--head);font-weight:600;font-size:15px;
-  background:var(--ink);color:#fff;border-radius:12px;padding:6px 14px;opacity:0;transition:.2s;pointer-events:none}
-.bld .prompt::after{content:'';position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-bottom:0;border-top-color:var(--ink)}
-.bld.near .prompt{opacity:1;transform:translate(-50%,0);animation:bob 1s ease-in-out infinite}
-.bld .chk{position:absolute;right:-14px;top:18%;width:38px;height:38px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:none;place-items:center;font-family:var(--head);font-weight:700;font-size:20px;box-shadow:0 3px 0 var(--ink)}
-.bld.done .chk{display:grid;animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
-.bld:hover .label{background:var(--yellow)}
-/* statue */
-.statue .ped{position:absolute;left:10%;right:10%;bottom:0;height:46%;background:#c9c3d6;border-radius:8px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.1),0 6px 0 rgba(0,0,0,.12)}
-.statue .ped::before{content:'WWDC22';position:absolute;inset:auto 0 18px;text-align:center;font-family:var(--head);font-weight:700;font-size:15px;color:var(--ink-soft)}
-.statue .star{position:absolute;left:50%;top:0;width:96px;height:92px;margin-left:-48px;background:var(--yellow);
-  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:shine 2.4s ease-in-out infinite}
-@keyframes shine{50%{transform:translateY(-6px) rotate(6deg);filter:brightness(1.15)}}
-
-/* sign */
-.sign{pointer-events:none}
-.sign .board{position:absolute;left:0;top:0;width:100%;background:#d9a066;border:3px solid #8a5a3b;border-radius:8px;padding:8px 10px;font-family:var(--head);font-weight:600;font-size:14px;line-height:1.25;text-align:center;color:#4a2f1b;box-shadow:0 4px 0 rgba(0,0,0,.15)}
-.sign .post{position:absolute;left:50%;bottom:0;width:10px;margin-left:-5px;height:30px;background:#8a5a3b;border-radius:3px}
-
-/* chests */
-.chest{width:46px;height:38px;cursor:pointer}
-.chest .base{position:absolute;left:0;right:0;bottom:0;height:24px;background:#c07a3c;border:3px solid var(--ink);border-radius:0 0 6px 6px}
-.chest .lid{position:absolute;left:0;right:0;top:0;height:18px;background:#d98f4a;border:3px solid var(--ink);border-radius:12px 12px 2px 2px;transform-origin:50% 100%;transition:transform .35s}
-.chest .lock{position:absolute;left:50%;top:12px;width:12px;height:12px;margin-left:-6px;background:var(--yellow);border:2px solid var(--ink);border-radius:3px;z-index:2}
-.chest:not(.open){animation:bob 1.6s ease-in-out infinite}
-.chest.open .lid{transform:translateY(-6px) rotate(-28deg)}
-.chest.open .lock{opacity:0}
-.chest.open::after{content:'';position:absolute;left:8px;top:-8px;width:30px;height:20px;border-radius:50%;background:radial-gradient(var(--yellow),transparent 70%);animation:glow 1s ease-out forwards}
-@keyframes glow{from{transform:scale(.4);opacity:1}to{transform:scale(2.4) translateY(-14px);opacity:0}}
-
-/* player */
-.player{width:56px;height:84px;pointer-events:none}
-.player .shadow{position:absolute;left:8px;bottom:-5px;width:40px;height:12px;border-radius:50%;background:rgba(0,0,0,.18)}
-.player .rig{position:absolute;inset:0;transform-origin:50% 100%}
-.player.flip .rig{transform:scaleX(-1)}
-.player .legs{position:absolute;left:17px;bottom:0;width:22px;height:16px}
-.player .legs i{position:absolute;bottom:0;width:9px;height:16px;background:#2b2440;border-radius:4px}
-.player .legs i:first-child{left:0}.player .legs i:last-child{right:0}
-.player .torso{position:absolute;left:10px;bottom:13px;width:36px;height:32px;background:#7184b8;border-radius:12px 12px 8px 8px;box-shadow:inset -5px -4px 0 rgba(0,0,0,.12)}
-.player .torso::after{content:'';position:absolute;right:6px;top:8px;width:8px;height:8px;background:var(--orange);border-radius:2px}
-.player .head{position:absolute;left:3px;top:0;width:50px;height:50px;border-radius:50%;border:3px solid var(--ink);background:#2b2440 url(images/shasha-face.jpg) center/cover;box-shadow:0 3px 0 rgba(0,0,0,.18)}
-.player.walk .rig{animation:hop .36s ease-in-out infinite}
-.player.walk .legs i:first-child{animation:step .36s ease-in-out infinite}
-.player.walk .legs i:last-child{animation:step .36s ease-in-out infinite reverse}
-@keyframes hop{50%{transform:translateY(-4px)}}
-.player.flip.walk .rig{animation-name:hopf}
-@keyframes hopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-4px)}}
-@keyframes step{50%{transform:translateY(-4px)}}
-.tapmark{position:absolute;width:30px;height:14px;margin:-7px 0 0 -15px;border:3px solid #fff;border-radius:50%;z-index:3;pointer-events:none;animation:tap .5s ease-out forwards}
-@keyframes tap{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
-
-@keyframes bob{50%{transform:translate(-50%,-5px)}}
-.chest:not(.open){animation-name:bobc}
-@keyframes bobc{50%{transform:translateY(-4px)}}
-@keyframes pop{from{transform:scale(0)}}
-
-/* ---------- HUD ---------- */
-.hud{position:fixed;z-index:50;pointer-events:none}
-.hud>*{pointer-events:auto}
-#hud-top{top:max(12px,env(safe-area-inset-top));left:12px;right:12px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
-.panel{background:var(--paper);border:3px solid var(--ink);border-radius:16px;box-shadow:var(--shadow)}
-.who{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px}
-.who img{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink);object-fit:cover}
-.who b{font-family:var(--head);font-size:18px;display:block;line-height:1.1}
-.who small{font-size:12px;color:var(--ink-soft);font-weight:700}
-.prog{padding:8px 14px;min-width:200px}
-.prog .row{display:flex;justify-content:space-between;font-size:13px;font-weight:800;margin-bottom:4px}
-.prog .bar{height:12px;border:2px solid var(--ink);border-radius:8px;background:#fff;overflow:hidden}
-.prog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));transition:width .5s}
-.prog .chests{font-size:12px;font-weight:700;color:var(--ink-soft);margin-top:4px}
-.hbtn{font-family:var(--head);font-weight:600;font-size:16px;padding:10px 16px;background:var(--yellow);border:3px solid var(--ink);border-radius:14px;box-shadow:var(--shadow);transition:transform .1s}
-.hbtn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
-.hbtn.alt{background:#fff}
-.right{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-.left{display:flex;flex-direction:column;gap:8px}
-#dock{bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:6px;max-width:calc(100% - 16px);overflow-x:auto;scrollbar-width:none}
-#dock::-webkit-scrollbar{display:none}
-#dock button{flex:none;display:flex;align-items:center;gap:6px;padding:6px 10px 6px 6px;background:#fff;border:2px solid var(--ink);border-radius:12px;font-weight:800;font-size:13px;color:var(--ink);white-space:nowrap}
-#dock button i{width:26px;height:26px;border-radius:8px;border:2px solid var(--ink);background:var(--c);display:grid;place-items:center;font-style:normal;font-family:var(--head);font-weight:700;font-size:14px}
-#dock button.done i::after{content:'\2713'}
-#dock button.done i{font-size:0}
-#dock button.done i::after{font-size:14px}
-#dock button:hover{background:var(--paper2)}
-#hint{position:fixed;left:50%;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 58px);transform:translateX(-50%);z-index:49;font-weight:800;font-size:12.5px;padding:6px 14px;text-align:center;max-width:calc(100% - 24px);pointer-events:none;transition:opacity .4s}
-#hint.off{opacity:0}
-#toast{position:fixed;left:50%;top:96px;transform:translate(-50%,-20px);z-index:80;opacity:0;transition:.3s;pointer-events:none;padding:12px 18px;width:max-content;max-width:min(420px,calc(100% - 32px));text-align:center}
-#toast.on{opacity:1;transform:translate(-50%,0)}
-#toast b{font-family:var(--head);font-size:18px;display:block;color:var(--orange)}
-#toast span{font-weight:700;font-size:14px}
-
-/* ---------- modal ---------- */
-.modal{position:fixed;inset:0;z-index:90;background:rgba(43,36,64,.45);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
-.modal.on{opacity:1;pointer-events:auto}
-.sheet{position:relative;width:min(760px,100%);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;background:var(--paper);border:4px solid var(--ink);border-radius:24px;box-shadow:0 8px 0 var(--ink);transform:translateY(24px) scale(.97);transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
-.modal.on .sheet{transform:none}
-.sheet-head{padding:24px 28px 18px;border-bottom:3px dashed rgba(43,36,64,.18);background:var(--tone,var(--yellow));border-radius:20px 20px 0 0}
-.sheet-head .kicker{font-weight:800;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:.75}
-.sheet-head h2{font-family:var(--head);font-size:clamp(26px,5vw,34px);line-height:1.1;margin-top:4px}
-.sheet-head p{font-weight:700;margin-top:6px;opacity:.85}
-.sheet-body{padding:22px 28px 28px;font-size:15.5px;line-height:1.65}
-.x{position:sticky;z-index:3;float:right;top:12px;margin:12px 12px -54px 0;width:42px;height:42px;border-radius:50%;background:#fff;border:3px solid var(--ink);font-size:20px;font-weight:800;line-height:1;box-shadow:0 3px 0 var(--ink)}
-.sheet-body p{margin-bottom:12px}
-.sheet-body b{color:#000}
-.about{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
-.polaroid{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px 8px 34px;transform:rotate(-3deg);box-shadow:0 4px 0 var(--ink);position:relative}
-.polaroid img{width:100%;height:auto;display:block;border-radius:6px;aspect-ratio:3/4;object-fit:cover;object-position:50% 12%}
-.polaroid span{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:var(--head);font-weight:600}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.chip{font-size:13px;font-weight:800;padding:5px 12px;border:2px solid var(--ink);border-radius:999px;background:#fff}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
-.stat{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:12px 8px;text-align:center}
-.stat b{font-family:var(--head);font-size:26px;display:block;color:var(--purple)}
-.stat small{font-weight:700;font-size:12px;color:var(--ink-soft)}
-.lead{font-size:16px;margin-bottom:16px}
-.classes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-.cls{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px;box-shadow:0 4px 0 var(--ink)}
-.cls h3{font-family:var(--head);font-size:18px;line-height:1.2}
-.cls .role{font-size:12px;font-weight:800;color:var(--purple);margin-bottom:6px}
-.cls p{font-size:14px;line-height:1.55;margin:0}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 6px;scrollbar-width:none}
-.filters::-webkit-scrollbar{display:none}
-.filters button{flex:none;font-weight:800;font-size:14px;padding:7px 16px;border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink)}
-.filters button[aria-pressed=true]{background:var(--ink);color:#fff}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.qcard{display:flex;flex-direction:column;overflow:hidden;background:#fff;border:3px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink)}
-.qcard[hidden]{display:none}
-.qcard .shot{display:block;width:100%;height:auto;aspect-ratio:3/1;object-fit:cover;border-bottom:3px solid var(--ink);background:var(--paper2)}
-.qcard .in{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
-.qcard h3{font-family:var(--head);font-size:20px;line-height:1.2;margin:8px 0 2px}
-.qcard .meta{font-size:12.5px;font-weight:800;color:var(--purple);margin-bottom:6px}
-.qcard p{font-size:14.5px;margin:0}
-.rar{display:inline-block;align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:2px solid var(--ink)}
-.rar.leg{background:var(--yellow)}.rar.epic{background:#d9cbff}.rar.rare{background:#bfe3ff}.rar.com{background:#e8e4ef}
-.qcard.legendary{background:linear-gradient(160deg,#fff7d1,#fff 55%)}
-.wins{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.wins b{font-family:var(--head);font-weight:600;font-size:14px;padding:3px 10px;border-radius:10px;background:#dff7e3;border:2px solid var(--ink)}
-details{margin-top:12px;border-top:2px dashed rgba(43,36,64,.2);padding-top:10px}
-summary{cursor:pointer;font-weight:800;font-size:14px;color:var(--purple);list-style:none;display:flex;align-items:center;gap:6px}
-summary::-webkit-details-marker{display:none}
-summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border:2px solid var(--purple);border-radius:6px;font-size:14px;line-height:1}
-details[open] summary::before{content:'\2212'}
-.log{font-size:14px;margin-top:6px}
-.log dt{font-weight:800;font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-soft);margin-top:8px}
-.log dd{margin:0}
-.log ul{margin:2px 0 0 18px}
-.qcard .tags{margin-top:auto;padding-top:10px}
-.note{font-size:13px;font-weight:700;color:var(--ink-soft);margin-top:12px}
-.ch .sum{font-size:14.5px;margin-top:4px}
-.skillbox p{font-size:13.5px;color:var(--ink-soft);margin:-6px 0 10px}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.tags span{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--paper2);border:2px solid rgba(43,36,64,.2)}
-.chapters{display:flex;flex-direction:column;gap:12px}
-.ch{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px}
-.ch .lv{width:64px;height:64px;border-radius:14px;background:var(--blue);color:#fff;border:3px solid var(--ink);display:grid;place-items:center;text-align:center;font-family:var(--head);font-weight:700;line-height:1}
-.ch .lv small{display:block;font-size:11px;font-weight:600}
-.ch .lv b{font-size:24px}
-.ch.now .lv{background:var(--pink)}
-.ch .when{font-size:12px;font-weight:800;color:var(--ink-soft);letter-spacing:.5px;text-transform:uppercase}
-.ch h3{font-family:var(--head);font-size:19px;line-height:1.2;margin:2px 0}
-.ch .org{font-weight:800;color:var(--purple);font-size:14px}
-.ch ul{margin:6px 0 0 18px;font-size:14px}
-.sheet-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.skillbox{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:16px}
-.skillbox h4{font-family:var(--head);font-size:18px;margin-bottom:10px}
-.sb{margin-bottom:10px}
-.sb .lb{display:flex;justify-content:space-between;font-size:13.5px;font-weight:700}
-.sb .tr{height:12px;border:2px solid var(--ink);border-radius:8px;background:var(--paper2);overflow:hidden;margin-top:3px}
-.sb .tr i{display:block;height:100%;width:0;background:var(--c,var(--orange));transition:width 1s cubic-bezier(.2,.8,.2,1)}
-.classcard{display:flex;gap:14px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px;margin-bottom:16px}
-.classcard img{width:64px;height:64px;border-radius:50%;border:3px solid var(--ink);object-fit:cover}
-.classcard b{font-family:var(--head);font-size:20px;display:block}
-.links{display:grid;gap:10px}
-.link{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:14px 16px;text-decoration:none;font-weight:800;box-shadow:0 4px 0 var(--ink);transition:transform .1s}
-.link:hover{background:var(--yellow)}
-.link:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
-.link small{font-weight:700;color:var(--ink-soft);word-break:break-all;text-align:right}
-.status{margin-top:16px;background:#dff7e3;border:3px solid var(--ink);border-radius:14px;padding:12px 16px;font-weight:800}
-.fame{display:grid;gap:12px}
-.fame .item{display:flex;gap:14px;align-items:flex-start;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:14px}
-.medal{flex:none;width:48px;height:48px;border-radius:50%;background:var(--yellow);border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:18px}
-.fame h3{font-family:var(--head);font-size:18px}
-.fame p{margin:2px 0 0;font-size:14px}
-.travel{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.travel button{display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:12px;box-shadow:0 4px 0 var(--ink);font-size:14px;font-weight:700;color:var(--ink)}
-.travel button:hover{background:var(--paper2)}
-.travel button .dot{flex:none;width:40px;height:40px;border-radius:12px;border:3px solid var(--ink);background:var(--c);display:grid;place-items:center;font-family:var(--head);font-weight:700;font-size:18px}
-.travel button b{font-family:var(--head);font-size:17px;display:block}
-.travel button.done .dot::after{content:'\2713'}
-
-/* ---------- title screen ---------- */
-#title{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:radial-gradient(circle at 50% 120%,#bfeaff 0 30%,transparent 31%),linear-gradient(#8fd6f5,#c8eefc);transition:opacity .5s,visibility .5s;overflow:auto}
-#title.gone{opacity:0;visibility:hidden}
-.tcard{display:grid;grid-template-columns:240px 1fr;gap:28px;align-items:center;width:min(780px,100%);background:var(--paper);border:4px solid var(--ink);border-radius:28px;box-shadow:0 10px 0 var(--ink);padding:26px}
-.tcard .pic{position:relative}
-.tcard .pic img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:50% 12%;border-radius:18px;border:4px solid var(--ink);background:#eee}
-.tcard .pic .tag{position:absolute;left:-10px;bottom:16px;background:var(--pink);color:#fff;font-family:var(--head);font-weight:600;padding:6px 14px;border:3px solid var(--ink);border-radius:12px;transform:rotate(-5deg)}
-.tcard .k{font-weight:800;letter-spacing:2px;font-size:12px;text-transform:uppercase;color:var(--purple)}
-.tcard h1{font-family:var(--head);font-size:clamp(38px,7vw,60px);line-height:1;margin:6px 0 6px}
-.tcard h1 span{color:var(--pink)}
-.tcard .full{font-weight:800;color:var(--ink-soft);margin-bottom:12px}
-.tcard p{line-height:1.6;margin-bottom:18px}
-.how{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.how span{font-size:13px;font-weight:800;padding:5px 12px;border-radius:999px;background:var(--paper2);border:2px solid rgba(43,36,64,.25)}
-.big{font-family:var(--head);font-weight:700;font-size:22px;padding:14px 28px;background:var(--green);color:#fff;border:4px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 var(--ink);text-shadow:0 2px 0 rgba(0,0,0,.2)}
-.big:hover{filter:brightness(1.06)}
-.big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
-.skip{margin-left:14px;font-weight:800;background:none;border:0;text-decoration:underline;color:var(--ink-soft);font-size:15px}
-
-/* confetti */
-.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:95;pointer-events:none;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
-
-@media (max-width:900px){.classes{grid-template-columns:1fr}}
-@media (max-width:700px){
-  #title{align-items:flex-start;padding:16px 14px max(16px,env(safe-area-inset-bottom))}
-  .tcard{grid-template-columns:1fr;text-align:center;padding:18px;gap:14px;border-radius:22px}
-  .tcard .pic{width:min(150px,44vw);margin:0 auto}
-  .tcard p{font-size:14.5px;margin-bottom:14px}
-  .big{font-size:19px;padding:12px 22px}
-  .modal{align-items:flex-end;padding:0}
-  .sheet{width:100%;max-height:92vh;max-height:92dvh;border-radius:22px 22px 0 0;border-bottom:0;box-shadow:none;transform:translateY(40px)}
-  .sheet-head{border-radius:18px 18px 0 0}
-  .sheet-body{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
-  .cards{grid-template-columns:1fr}
-  .ch{grid-template-columns:48px 1fr;gap:10px;padding:12px}
-  .ch .lv{width:48px;height:48px}.ch .lv b{font-size:19px}
-  #dock button span{display:none}
-  #dock button{padding:5px}
-  #dock button i{width:32px;height:32px;font-size:16px}
-  #toast{top:84px}
-  .how{justify-content:center}
-  .skip{display:block;margin:12px auto 0}
-  .about{grid-template-columns:1fr}
-  .polaroid{width:180px;margin:0 auto}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);overflow-x:hidden}
+::selection{background:var(--green);color:#000}
+a{color:var(--cyan);text-decoration:none}
+/* scanlines + grid bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,255,156,.012) 2px 4px);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:linear-gradient(rgba(56,217,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,217,255,.04) 1px,transparent 1px);
+  background-size:44px 44px;}
+/* boot screen */
+#boot{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;transition:opacity .6s;padding:20px}
+#boot.done{opacity:0;pointer-events:none}
+.bootbox{font-family:var(--mono);font-size:14px;color:var(--green);max-width:560px;width:100%}
+.bootbox .bl{opacity:0;white-space:pre-wrap}
+.bootbox .bl.on{opacity:1}
+.bootbar{height:8px;background:var(--line);margin-top:16px;border:1px solid var(--green-dim)}
+.bootbar>div{height:100%;width:0;background:var(--green);transition:width .3s}
+.blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);font-family:var(--mono)}
+nav .in{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+nav .logo{color:var(--green);font-weight:700;font-size:14px;letter-spacing:.5px}
+nav .logo b{color:var(--white)}
+nav .links{margin-left:auto;display:flex;gap:16px;font-size:12px}
+nav .links a{color:var(--txt-dim)}
+nav .links a:hover{color:var(--green)}
+/* hero */
+header{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding:100px 24px 60px}
+.hero{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;width:100%}
+.tag{font-family:var(--mono);color:var(--green);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+h1.name{font-size:clamp(44px,8vw,80px);line-height:1.05;color:var(--white);margin:10px 0 10px;font-weight:700}
+h1.name .hl{color:var(--green)}
+.fullname{font-family:var(--mono);color:var(--txt-dim);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-top:8px}
+.role{font-family:var(--mono);color:var(--cyan);font-size:15px;margin-bottom:20px}
+.role .cursor{display:inline-block;width:9px;height:16px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+.hero p.desc{color:var(--txt-dim);line-height:1.7;max-width:520px;margin-bottom:28px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:13px}
+.btn{padding:12px 22px;border:1px solid var(--green-dim);color:var(--green);background:transparent;cursor:pointer;font-family:var(--mono);transition:.2s;position:relative;overflow:hidden}
+.btn:hover{background:var(--green);color:#000;box-shadow:0 0 24px rgba(0,255,156,.35)}
+.btn.ghost{border-color:var(--line);color:var(--txt-dim)}
+.btn.ghost:hover{background:var(--cyan);border-color:var(--cyan);color:#000;box-shadow:0 0 24px rgba(56,217,255,.3)}
+/* terminal card */
+.term{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.term .bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.term .bar i{width:11px;height:11px;border-radius:50%;display:block}
+.term .bar i:nth-child(1){background:var(--red)}.term .bar i:nth-child(2){background:var(--amber)}.term .bar i:nth-child(3){background:var(--green)}
+.term .body{font-family:var(--mono);font-size:12.5px;padding:18px;line-height:1.9;min-height:250px}
+.term .body .pr{color:var(--green)}
+.term .body .out{color:var(--txt-dim)}
+.term .body .ok{color:var(--green)}
+.term .body .warn{color:var(--amber)}
+/* sections */
+section{max-width:1100px;margin:0 auto;padding:90px 24px;position:relative;z-index:1}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:44px;font-family:var(--mono)}
+.sec-head .n{color:var(--green);font-size:14px}
+.sec-head h2{color:var(--white);font-size:clamp(22px,3.4vw,30px);font-weight:700}
+.sec-head .rule{flex:1;height:1px;background:var(--line)}
+.sec-head .cnt{font-size:12px;color:var(--txt-dim)}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:60px}
+.stat{background:var(--panel);border:1px solid var(--line);padding:20px;border-radius:8px;text-align:center}
+.stat .v{font-family:var(--mono);color:var(--green);font-size:clamp(20px,3vw,30px);font-weight:700}
+.stat .l{color:var(--txt-dim);font-size:12px;margin-top:6px}
+/* threat board / projects */
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:24px;position:relative;transition:.25s;overflow:hidden}
+.card:hover{border-color:var(--green-dim);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,255,156,.08)}
+.card .sev{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:14px}
+.sev.crit{background:rgba(255,77,109,.12);color:var(--red);border:1px solid rgba(255,77,109,.4)}
+.sev.high{background:rgba(255,179,64,.12);color:var(--amber);border:1px solid rgba(255,179,64,.4)}
+.sev.med{background:rgba(56,217,255,.12);color:var(--cyan);border:1px solid rgba(56,217,255,.4)}
+.sev.legend{background:rgba(0,255,156,.12);color:var(--green);border:1px solid rgba(0,255,156,.5)}
+.card h3{color:var(--white);font-size:18px;margin-bottom:4px}
+.card .meta{font-family:var(--mono);font-size:11px;color:var(--txt-dim);margin-bottom:12px}
+.card p{font-size:13.5px;color:var(--txt-dim);line-height:1.65}
+.card .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.card .tags span{font-family:var(--mono);font-size:10.5px;color:var(--cyan);background:rgba(56,217,255,.07);border:1px solid rgba(56,217,255,.2);padding:3px 9px;border-radius:4px}
+.card.legendary{border-color:rgba(0,255,156,.5);background:linear-gradient(145deg,var(--panel),rgba(0,255,156,.05))}
+.card.legendary::after{content:'★ LEGENDARY';position:absolute;top:14px;right:-32px;transform:rotate(38deg);font-family:var(--mono);font-size:9px;letter-spacing:2px;background:var(--green);color:#000;padding:4px 36px;font-weight:700}
+/* experience timeline */
+.tl{position:relative;padding-left:32px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:linear-gradient(var(--green-dim),var(--line))}
+.tl-item{position:relative;padding:0 0 40px}
+.tl-item::before{content:'';position:absolute;left:-29px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--green);box-shadow:0 0 12px rgba(0,255,156,.4)}
+.tl-item .when{font-family:var(--mono);font-size:11.5px;color:var(--green);letter-spacing:1px}
+.tl-item h3{color:var(--white);font-size:17px;margin:6px 0 2px}
+.tl-item .org{font-family:var(--mono);font-size:12px;color:var(--cyan);margin-bottom:10px}
+.tl-item ul{list-style:none}
+.tl-item li{font-size:13.5px;color:var(--txt-dim);line-height:1.7;padding-left:16px;position:relative}
+.tl-item li::before{content:'▸';position:absolute;left:0;color:var(--green-dim)}
+.tl-item b,.card p b{color:var(--txt)}
+/* skills */
+.skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.sk{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px}
+.sk h4{font-family:var(--mono);color:var(--green);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
+.sk .bar-row{margin-bottom:12px}
+.sk .bar-row .lb{display:flex;justify-content:space-between;font-size:12px;color:var(--txt);margin-bottom:5px}
+.sk .bar-row .lb i{font-style:normal;color:var(--txt-dim);font-family:var(--mono);font-size:10px}
+.sk .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.sk .fill{height:100%;width:0;background:linear-gradient(90deg,var(--green-dim),var(--green));border-radius:3px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+/* about / profile */
+.about-wrap{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start}
+.photo-frame{position:relative;border:1px solid var(--green-dim);border-radius:10px;padding:10px;background:var(--panel)}
+.photo-frame::before{content:'ID_VERIFIED';position:absolute;top:-9px;left:16px;background:var(--bg);color:var(--green);font-family:var(--mono);font-size:10px;padding:0 8px;letter-spacing:1.5px}
+.photo-frame img{width:100%;display:block;border-radius:6px;filter:grayscale(35%) contrast(1.05)}
+.photo-frame .scanline{position:absolute;left:10px;right:10px;height:2px;background:var(--green);opacity:.5;animation:scan 4s linear infinite;border-radius:2px}
+@keyframes scan{0%{top:10px}50%{top:calc(100% - 12px)}100%{top:10px}}
+.about-txt p{line-height:1.8;color:var(--txt-dim);margin-bottom:16px;font-size:14.5px}
+.about-txt p b{color:var(--txt)}
+.about-txt .ach{font-family:var(--mono);font-size:12.5px;color:var(--green);line-height:2}
+/* footer */
+footer{border-top:1px solid var(--line);padding:40px 24px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--txt-dim);position:relative;z-index:1}
+footer .soc{display:flex;justify-content:center;gap:22px;margin-bottom:18px}
+footer .soc a{color:var(--txt-dim);font-size:12px}
+footer .soc a:hover{color:var(--green)}
+footer .gl{color:var(--green)}
+/* toast found */
+#toast{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--green);color:var(--green);padding:12px 18px;border-radius:6px;box-shadow:0 0 30px rgba(0,255,156,.25);opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+#toast.on{opacity:1;transform:translateY(0)}
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.8,.2,1)}
+.rv.on{opacity:1;transform:none}
+/* responsive */
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr;gap:32px}
+  .term{order:-1}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .sheet-head{padding:20px 60px 16px 20px}
-  .sheet-body{padding:18px 18px 22px}
-  .who small,.prog .chests{display:none}
-  .who{padding:6px 10px 6px 6px}.who img{width:36px;height:36px}.who b{font-size:16px}
-  .prog{min-width:0;padding:6px 10px}
-  .hbtn{font-size:14px;padding:8px 12px}
+  .about-wrap{grid-template-columns:1fr}
+  .photo-frame{max-width:280px;margin:0 auto}
+  nav .links{width:100%;justify-content:center;margin:0}
+  section{padding:64px 18px}
 }
-@media (max-width:380px){.prog{display:none}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<!-- TITLE SCREEN -->
-<div id="title">
-  <div class="tcard">
-    <div class="pic"><img src="images/shasha-portrait.webp" alt="Shasha" width="600" height="800" fetchpriority="high"><div class="tag">Player 1</div></div>
+<!-- BOOT -->
+<div id="boot"><div class="bootbox">
+<div class="bl" data-t="0">$ ./init --portfolio shasha</div>
+<div class="bl" data-t="400">[<span class="ok">OK</span>] loading identity ... <span class="ok">verified</span></div>
+<div class="bl" data-t="800">[<span class="ok">OK</span>] loading modules: ios_security, wwdc22, b2b_automation</div>
+<div class="bl" data-t="1200">[<span class="warn">!!</span>] threat board: 7 vulnerabilities found. takedown in progress...</div>
+<div class="bl" data-t="1700" style="color:var(--white)">ACCESS GRANTED. welcome, analyst.</div>
+<div class="bootbar"><div id="bootfill"></div></div>
+<div class="bl" data-t="2000" style="color:var(--txt-dim)">press any key or tap to continue <span class="blink">█</span></div>
+</div></div>
+
+<nav><div class="in">
+  <span class="logo">~/<b>shasha</b>.sec</span>
+  <div class="links">
+    <a href="#about">whoami</a>
+    <a href="#threats">threat-board</a>
+    <a href="#exp">log</a>
+    <a href="#skills">skills</a>
+    <a href="#contact">contact</a>
+  </div>
+</div></nav>
+
+<!-- HERO -->
+<header>
+  <div class="hero">
     <div>
-      <div class="k">A tiny portfolio adventure</div>
-      <h1>Welcome to <span>Shasha</span> Island</h1>
-      <div class="full">Balqis Shafira Aini · Application Security Engineer</div>
-      <p>I build iOS apps for banks and now keep them safe from attackers. Walk around the island and step into each building to see my story, projects, career, and skills. Find all 6 places and the 4 hidden treasure chests.</p>
-      <div class="how" id="how"></div>
-      <button class="big" id="start">Start exploring</button>
-      <button class="skip" id="skip">Skip the game, show me the menu</button>
+      <div class="tag">// security clearance: granted</div>
+      <div class="fullname">Balqis Shafira Aini</div>
+      <h1 class="name"><span class="hl">Shasha</span></h1>
+      <div class="role"><span id="typed"></span><span class="cursor"></span></div>
+      <p class="desc">iOS Developer (3 yrs) now growing into security as an <b>Application Security Engineer</b> at PT Bank Mandiri — currently building an Authenticator SDK from zero to protect the bank's internal apps. Winner of Apple WWDC22 Swift Student Challenge. Founder of PT Anoran Technology.</p>
+      <div class="cta">
+        <a class="btn" href="#threats">$ scan portfolio</a>
+        <a class="btn ghost" href="#contact">.contact()</a>
+      </div>
+    </div>
+    <div class="term">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="body" id="termlines"></div>
     </div>
   </div>
-</div>
+</header>
 
-<!-- GAME -->
-<div id="viewport" aria-label="Island map"><div id="world"></div></div>
-
-<div class="hud" id="hud-top">
-  <div class="left">
-    <div class="panel who"><img src="images/shasha-face.jpg" alt=""><div><b>Shasha</b><small>AppSec Engineer · Bank Mandiri</small></div></div>
-  </div>
-  <div class="right">
-    <div class="panel prog">
-      <div class="row"><span>Places found</span><span id="p-cnt">0/6</span></div>
-      <div class="bar"><i id="p-bar"></i></div>
-      <div class="chests">Treasure chests: <span id="c-cnt">0/4</span></div>
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-head rv"><span class="n">01</span><h2>whoami</h2><div class="rule"></div><span class="cnt">analyst_profile</span></div>
+  <div class="about-wrap">
+    <div class="photo-frame rv"><div class="scanline"></div><img src="balqis.jpg" alt="Shasha"></div>
+    <div class="about-txt rv">
+      <p><b>iOS Developer (3 yrs) growing into security.</b> I spent 3 years building financial-grade iOS apps for banks and fintech — LINE Bank (KEB Hana), Bank Jakarta, Pegadaian — and recently stepped into security as an <b>Application Security Engineer at PT Bank Mandiri</b>.</p>
+      <p>My security journey is hands-on: as part of a division initiative, my team is building an <b>Authenticator SDK from zero</b> (ideation to development) to protect the bank's internal apps. Before that, I built a full passwordless MFA system end-to-end (Secure Enclave, ECDSA P-256, SSL pinning, runtime protection) as my deep-dive into mobile security.</p>
+      <p>What drives me: <b>I'm a passionate builder.</b> Give me a problem, I'll prototype, ship, and iterate. From banking features used by millions, to my own PT that automates enterprise operations for 2 large clients.</p>
+      <div class="ach">▸ ★ WWDC Swift Student Challenge Winner 2022<br>▸ Cargill Global Scholar 2022–24 — 1 of 10 worldwide<br>▸ GPA 3.94/4.0 · Summa Cum Laude · Univ. of Lampung</div>
     </div>
-    <button class="hbtn" id="mapbtn">Island map</button>
   </div>
-</div>
-<div class="panel" id="hint"></div>
-<nav class="hud panel" id="dock" aria-label="Places"></nav>
-<div id="toast" class="panel" role="status" aria-live="polite"><b id="toast-t"></b><span id="toast-s"></span></div>
+  <div class="stats rv" style="margin-top:56px">
+    <div class="stat"><div class="v" data-count="3">0</div><div class="l">years in iOS</div></div>
+    <div class="stat"><div class="v" data-count="2" data-suffix="+">0</div><div class="l">B2B enterprise clients</div></div>
+    <div class="stat"><div class="v" data-count="9" data-suffix="">0</div><div class="l">HAKI submissions</div></div>
+    <div class="stat"><div class="v" data-count="72" data-suffix="%">0</div><div class="l">cost reduction shipped</div></div>
+  </div>
+</section>
 
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
-    <button class="x" id="m-close" aria-label="Close">&times;</button>
-    <div class="sheet-head" id="m-head"><div class="kicker" id="m-kick"></div><h2 id="m-title"></h2><p id="m-sub"></p></div>
-    <div class="sheet-body" id="m-body"></div>
+<!-- THREAT BOARD = PORTFOLIO -->
+<section id="threats">
+  <div class="sec-head rv"><span class="n">02</span><h2>threat board</h2><div class="rule"></div><span class="cnt" id="found-cnt">0/7 identified</span></div>
+  <p class="rv" style="color:var(--txt-dim);font-size:13px;margin:-26px 0 34px;font-family:var(--mono)">// my projects, presented as vulnerabilities to be found. click a threat to identify it.</p>
+  <div class="board">
+    <div class="card rv" data-found>
+      <span class="sev crit">SEVERITY: CRITICAL</span>
+      <h3>Authenticator SDK</h3>
+      <div class="meta">Bank Mandiri · In development · Division initiative</div>
+      <p>My current mission: building an <b>Authenticator SDK from zero</b> — from ideation to development — to bring hardware-backed authentication and app protection to the bank's internal apps. The project I'm most excited about right now.</p>
+      <div class="tags"><span>iOS SDK</span><span>AppSec</span><span>From 0 to 1</span></div>
+    </div>
+    <div class="card legendary rv" data-found>
+      <span class="sev legend">SEVERITY: LEGENDARY</span>
+      <h3>Melodissimo</h3>
+      <div class="meta">SwiftUI · Apple WWDC22 · Music</div>
+      <p>Award-winning music-learning app recognized at <b>Apple WWDC22</b> — reached App Store Top 50 in Music. Built from concept through launch with SwiftUI.</p>
+      <div class="tags"><span>SwiftUI</span><span>WWDC22</span><span>App Store Top 50</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev crit">SEVERITY: CRITICAL</span>
+      <h3>MFA-App</h3>
+      <div class="meta">iOS + FastAPI · Personal deep-dive project</div>
+      <p>My deep-dive into mobile security: a full passwordless MFA system built end-to-end — <b>Secure Enclave</b> EC P-256, biometry-bound keys, replay prevention, jailbreak/debugger detection, SSL pinning, key rotation. This project is what got me my current AppSec role.</p>
+      <div class="tags"><span>Secure Enclave</span><span>ECDSA P-256</span><span>SSL Pinning</span><span>Anti-Frida</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev high">SEVERITY: HIGH</span>
+      <h3>LINE Bank — QRIS Overseas</h3>
+      <div class="meta">PT Bank KEB Hana · iOS · Fintech</div>
+      <p>Owned the QRIS overseas payment overhaul — cut transaction time by <b>70%</b> and reduced monthly fee-exemption gross cost by <b>72%</b>. Also shipped digital loan &amp; Korean NFC transit card.</p>
+      <div class="tags"><span>RxSwift</span><span>QRIS</span><span>NFC</span><span>MVVM</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev high">SEVERITY: HIGH</span>
+      <h3>PT Anoran Technology</h3>
+      <div class="meta">Founder · B2B Automation</div>
+      <p>Founded my own tech company. Signed <b>2 large enterprise clients</b> — built automated daily multi-store reporting and competitor analysis systems that run their operations.</p>
+      <div class="tags"><span>B2B</span><span>Automation</span><span>Consulting</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev med">SEVERITY: MEDIUM</span>
+      <h3>Enterprise ERP — IoT Sync</h3>
+      <div class="meta">Flutter · IoT · 9 HAKI</div>
+      <p>Real-time data synchronization cutting operational inefficiency by <b>30%</b>; integrated Weight Bridge &amp; GPS tracking; contributed to <b>9 HAKI</b> (IP rights) submissions.</p>
+      <div class="tags"><span>Flutter</span><span>GetX</span><span>IoT</span><span>HAKI x9</span></div>
+    </div>
+    <div class="card rv" data-found>
+      <span class="sev med">SEVERITY: MEDIUM</span>
+      <h3>Academy Apps</h3>
+      <div class="meta">Apple Developer Academy · 2.8% accept</div>
+      <p>Shipped 5 iOS projects, 2 on the App Store with <b>5.0 ratings</b> — Reeach (fintech for Gen Z), Rerupa (Vision+PencilKit drawing), Compy (storytelling programming).</p>
+      <div class="tags"><span>UIKit</span><span>Vision</span><span>PencilKit</span><span>CoreGraphics</span></div>
+    </div>
   </div>
-</div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="exp">
+  <div class="sec-head rv"><span class="n">03</span><h2>access log</h2><div class="rule"></div><span class="cnt">career_history</span></div>
+  <div class="tl">
+    <div class="tl-item rv">
+      <div class="when">SEP 2026 — PRESENT</div>
+      <h3>Application Security Engineer</h3>
+      <div class="org">PT Bank Mandiri</div>
+      <ul><li>Building an <b>Authenticator SDK from zero</b> (division initiative) — from ideation to development — to protect the bank's internal apps. Growing my security craft every day.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">MAR 2026 — AUG 2026</div>
+      <h3>iOS Developer — New Mobile Banking App</h3>
+      <div class="org">Bank Jakarta · under PT Anoran Technology</div>
+      <ul><li>Built a new mobile banking app from scratch: QRIS, Top Up, Payment, Digital Loan, Credit Card flows.</li><li>Secure API integrations with Moya, Alamofire, SwiftProtobuf.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">NOV 2025 — MAR 2026</div>
+      <h3>iOS Developer — Tring!</h3>
+      <div class="org">Pegadaian</div>
+      <ul><li>SwiftUI + Combine + MVVM-R; 50+ tickets/month, 5+ features delivered under tight timelines.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">MAY 2024 — NOV 2025</div>
+      <h3>iOS Developer — LINE Bank</h3>
+      <div class="org">PT Bank KEB Hana Indonesia</div>
+      <ul><li>QRIS overseas payments: −70% transaction time · fee-free feature: −72% gross cost.</li><li>Digital loan feature, Korean Transportation Card (NFC e-money), RxSwift/MVVM modernization.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">2023 — PRESENT</div>
+      <h3>Founder &amp; B2B Automation Consultant</h3>
+      <div class="org">PT Anoran Technology</div>
+      <ul><li>2 large enterprise clients; automated daily multi-store reporting &amp; competitor analysis pipelines.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">JUN 2023 — NOV 2023</div>
+      <h3>Flutter Mobile Developer</h3>
+      <div class="org">PT Rindang Tigasatu Pratama</div>
+      <ul><li>Enterprise ERP, real-time IoT sync (−30% inefficiency), 9 HAKI submissions.</li></ul>
+    </div>
+    <div class="tl-item rv">
+      <div class="when">FEB 2022 — DEC 2022</div>
+      <h3>iOS Developer</h3>
+      <div class="org">Apple Developer Academy · 2.8% acceptance</div>
+      <ul><li>5 projects, 2 on App Store (5.0 avg). Built Melodissimo — recognized at WWDC22.</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-head rv"><span class="n">04</span><h2>skill tree</h2><div class="rule"></div><span class="cnt">loadout</span></div>
+  <div class="skill-grid">
+    <div class="sk rv"><h4>mobile-security (growing)</h4>
+      <div class="bar-row"><div class="lb"><span>Secure Enclave &amp; Keychain</span><i>72</i></div><div class="track"><div class="fill" data-w="72"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>SSL/TLS Pinning</span><i>70</i></div><div class="track"><div class="fill" data-w="70"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Runtime Protection</span><i>65</i></div><div class="track"><div class="fill" data-w="65"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>OWASP MASVS</span><i>60</i></div><div class="track"><div class="fill" data-w="60"></div></div></div>
+    </div>
+    <div class="sk rv"><h4>ios-engineering (core strength)</h4>
+      <div class="bar-row"><div class="lb"><span>Swift / SwiftUI</span><i>93</i></div><div class="track"><div class="fill" data-w="93"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>UIKit / RxSwift / Combine</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>MVVM / Architecture</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Moya / Alamofire / Protobuf</span><i>87</i></div><div class="track"><div class="fill" data-w="87"></div></div></div>
+    </div>
+    <div class="sk rv"><h4>backend-&amp;-automation</h4>
+      <div class="bar-row"><div class="lb"><span>FastAPI (Python)</span><i>80</i></div><div class="track"><div class="fill" data-w="80"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>API Hardening / Rate Limiting</span><i>85</i></div><div class="track"><div class="fill" data-w="85"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>B2B Workflow Automation</span><i>90</i></div><div class="track"><div class="fill" data-w="90"></div></div></div>
+      <div class="bar-row"><div class="lb"><span>Flutter / GetX</span><i>78</i></div><div class="track"><div class="fill" data-w="78"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding-bottom:60px">
+  <div class="sec-head rv"><span class="n">05</span><h2>open a channel</h2><div class="rule"></div><span class="cnt">secure_contact</span></div>
+  <div class="term rv">
+    <div class="bar"><i></i><i></i><i></i></div>
+    <div class="body" style="min-height:auto">
+      <div class="pr">$ handshake --invite shasha</div>
+      <div class="out">establishing secure channel...</div>
+      <div class="out">&nbsp;</div>
+      <div class="ok">▸ email&nbsp;&nbsp;&nbsp;: <a href="mailto:balqisshafiraaini@gmail.com" style="color:var(--green)">balqisshafiraaini@gmail.com</a></div>
+      <div class="ok">▸ linkedin : <a href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" style="color:var(--green)">linkedin.com/in/balqishafiraini</a></div>
+      <div class="ok">▸ github&nbsp;&nbsp;&nbsp;: <a href="https://github.com/balqishafiraini" target="_blank" style="color:var(--green)">github.com/balqishafiraini</a></div>
+      <div class="ok">▸ medium&nbsp;&nbsp;&nbsp;: <a href="https://balqishafiraini.medium.com/" target="_blank" style="color:var(--green)">balqishafiraini.medium.com</a></div>
+      <div class="out" style="margin-top:10px">status: <span class="warn">OPEN TO REMOTE OPPORTUNITIES (WFH)</span> <span class="blink">█</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="soc">
+    <a href="https://www.linkedin.com/in/balqishafiraini/" target="_blank">linkedin</a>
+    <a href="https://github.com/balqishafiraini" target="_blank">github</a>
+    <a href="https://balqishafiraini.medium.com/" target="_blank">medium</a>
+  </div>
+  <div>© 2026 Shasha · <span class="gl">no vulnerabilities were harmed</span> in the making of this site</div>
+</footer>
+
+<div id="toast">🔓 THREAT IDENTIFIED — <span id="toast-txt"></span></div>
 
 <script>
-(()=>{
-const W=2200,H=1500,EDGE=120;
-const world=document.getElementById('world'),vp=document.getElementById('viewport');
-world.style.width=W+'px';world.style.height=H+'px';
+// boot
+const boot=document.getElementById('boot');
+function endBoot(){boot.classList.add('done')}
+document.querySelectorAll('.bl').forEach(el=>setTimeout(()=>el.classList.add('on'),+el.dataset.t));
+let f=0;const iv=setInterval(()=>{f+=20;document.getElementById('bootfill').style.width=f+'%';if(f>=100)clearInterval(iv)},340);
+setTimeout(()=>{endBoot()},2600);
+boot.addEventListener('click',endBoot);
+window.addEventListener('keydown',endBoot,{once:true});
 
-/* ---------- content ---------- */
-const QUESTS=[
- {f:'ios',r:['leg','Legendary'],t:'Melodissimo',who:'Apple WWDC22 Swift Student Challenge',img:'melodissimo',
-  sum:'An interactive Swift Playgrounds app with an on-screen melodica that tells the story of my school\'s melodica through code.',
-  wins:['WWDC22 winner','App Store Top 50 Music'],
-  log:{Built:'My first Swift Playground and my first SwiftUI project, from concept to submission.',Result:'Apple selected it as a winning WWDC22 Swift Student Challenge submission, and it later reached the App Store Top 50 in Music.'},
-  tags:['SwiftUI','Swift Playgrounds']},
- {f:'sec',r:['epic','Epic'],t:'MFA-App: passwordless login',who:'Personal project · iOS + FastAPI',
-  sum:'A complete passwordless multi-factor login system, built by myself end to end: the iOS app, the backend, and the security controls.',
-  wins:['Solo, end to end'],
-  log:{Problem:'Passwords and SMS OTP are easy to phish or intercept, and banks need login that is tied to the real device and the real person.',Built:['Login keys created inside the iPhone\'s Secure Enclave (EC P-256) so the private key never leaves the chip','Keys locked behind Face ID / Touch ID; the server sends a challenge and the phone signs it (ECDSA)','Replay prevention so a captured request can\'t be reused','Jailbreak, debugger and Frida detection, plus SSL certificate pinning','Key rotation without downtime'],Result:'A working reference implementation of the same protections used in production banking apps.'},
-  tags:['Secure Enclave','ECDSA P-256','SSL pinning','FastAPI']},
- {f:'bank',r:['epic','Epic'],t:'LINE Bank: QRIS overseas',who:'PT Bank KEB Hana Indonesia · iOS',
-  sum:'Let LINE Bank customers pay by scanning QRIS codes abroad. I owned the iOS side of the payment overhaul.',
-  wins:['−70% transaction time','−72% fee-exemption cost'],
-  log:{Problem:'Overseas QR payments were slow, and the fee-free promotion was costing the bank a lot each month.',Built:['Reworked the QRIS overseas payment flow in the iOS app','Built the fee-exemption feature with cheaper logic behind it','Also shipped digital loan and a Korean transit card (NFC e-money) feature','Modernized code with RxSwift and MVVM'],Result:'Transactions became 70% faster and the monthly gross cost of the fee-free feature dropped 72%.'},
-  tags:['Swift','RxSwift','MVVM','NFC','QRIS']},
- {f:'bank',r:['rare','Rare'],t:'Bank Jakarta: new mobile banking app',who:'Bank Jakarta · via PT Anoran Technology',
-  sum:'Helped build Bank Jakarta\'s new mobile banking app from scratch.',
-  wins:['Built from zero'],
-  log:{Built:['QRIS payments, top up, bill payment, digital loan and credit card features','Secure API integration using Moya, Alamofire and SwiftProtobuf'],Result:'Core money features delivered on a brand-new codebase.'},
-  tags:['Swift','Moya','Alamofire','Protobuf']},
- {f:'bank',r:['rare','Rare'],t:'Pegadaian: Tring!',who:'Pegadaian · iOS',
-  sum:'Feature work on Pegadaian\'s Tring! app, under tight deadlines.',
-  wins:['50+ tickets / month','5+ features'],
-  log:{Built:'New features and fixes in SwiftUI with Combine and an MVVM-R architecture.',Result:'Closed 50+ tickets a month and delivered 5+ features on time.'},
-  tags:['SwiftUI','Combine','MVVM-R']},
- {f:'biz',r:['epic','Epic'],t:'PT Anoran Technology',who:'Founder · B2B automation',
-  sum:'My own company. We replace slow manual reporting with automated systems for businesses.',
-  wins:['2 enterprise clients'],
-  log:{Problem:'Clients with many stores were collecting sales numbers and checking competitors by hand every day.',Built:['Automated daily multi-store reporting','Automated competitor analysis'],Result:'Signed 2 large enterprise clients who now run their daily operations on these systems.'},
-  tags:['Automation','Reporting','B2B']},
- {f:'biz',r:['rare','Rare'],t:'Enterprise ERP with IoT sync',who:'PT Rindang Tigasatu Pratama · Flutter',
-  sum:'A Flutter ERP app connected to field hardware: truck weigh bridges and GPS trackers.',
-  wins:['−30% inefficiency','9 HAKI filings'],
-  log:{Built:['Real-time data sync between the app and IoT devices','Weigh bridge and GPS tracking integration'],Result:'Operational inefficiency dropped 30% and the work contributed to 9 intellectual property (HAKI) filings.'},
-  tags:['Flutter','GetX','IoT']},
- {f:'ios',r:['rare','Rare'],t:'Reeach',who:'Apple Developer Academy · iOS',img:'reeach',
-  sum:'A money planner for young Gen Z that helps them set S.M.A.R.T. savings goals and stick to them.',
-  tags:['iOS','Fintech']},
- {f:'ios',r:['rare','Rare'],t:'Rerupa',who:'Apple Developer Academy · iPadOS',img:'rerupa',
-  sum:'A re-drawing app: Apple\'s Vision contour detection traces the outlines of a picture, then you redraw and recolor it with Apple Pencil.',
-  tags:['Vision','PencilKit','iPadOS']},
- {f:'ios',r:['rare','Rare'],t:'Compy',who:'Apple Developer Academy · iOS',img:'compy',
-  sum:'Teaches programming basics to young adults from non-IT majors through short stories instead of jargon.',
-  tags:['iOS','Education']},
- {f:'ios',r:['com','Common'],t:'Beautize',who:'iOS',img:'beautize',
-  sum:'Helps beauty enthusiasts organize their products so nothing sits unused and goes to waste.',
-  tags:['iOS']},
- {f:'ios',r:['com','Common'],t:'FOTRA',who:'iOS',img:'fotra',
-  sum:'Helps travelers find destination information for their trip in one place.',
-  tags:['iOS','Travel']}
+// typing role
+const roles=['iOS Developer','Passionate Builder','AppSec (growing)','Apple WWDC22 Winner','B2B Automation Consultant'];
+const tEl=document.getElementById('typed');let ri=0,ci=0,del=false;
+(function type(){const r=roles[ri];tEl.textContent=r.slice(0,ci);
+  if(!del&&ci<r.length){ci++;setTimeout(type,55)}
+  else if(!del){del=true;setTimeout(type,1800)}
+  else if(ci>0){ci--;setTimeout(type,28)}
+  else{del=false;ri=(ri+1)%roles.length;setTimeout(type,300)}})();
+
+// hero terminal
+const lines=[
+  ['pr','$ whoami'],
+  ['out','shasha — iOS dev → appsec @ Bank Mandiri · builder'],
+  ['pr','$ nmap portfolio.local'],
+  ['ok','22/wwdc22   open  [winner]'],
+  ['ok','443/secure-enclave  open  [hardened]'],
+  ['ok','8080/anoran-b2b     open  [2 clients]'],
+  ['warn','1337/easter-egg     open  [keep scanning ↓]'],
+  ['pr','$ cat mission.txt'],
+  ['out','"build things that matter. secure them well."'],
 ];
-const LEVELS=[
- [1,'Sep 2026 — now','Application Security Engineer','PT Bank Mandiri','Securing the bank\'s apps: mobile and application-layer security across its digital products.'],
- [0,'Mar 2026 — Aug 2026','iOS Developer, new mobile banking app','Bank Jakarta · via PT Anoran Technology','Built a new banking app from scratch.',['QRIS, top up, payment, digital loan, credit card','Secure API integration with Moya, Alamofire, SwiftProtobuf']],
- [0,'Nov 2025 — Mar 2026','iOS Developer, Tring!','Pegadaian','Fast feature delivery on a SwiftUI app.',['SwiftUI + Combine + MVVM-R','50+ tickets a month, 5+ features under tight timelines']],
- [0,'May 2024 — Nov 2025','iOS Developer, LINE Bank','PT Bank KEB Hana Indonesia','Owned payment features used by bank customers.',['QRIS overseas payments: −70% transaction time','Fee-free feature: −72% monthly gross cost','Digital loan, Korean transit card (NFC), RxSwift/MVVM modernization']],
- [0,'2023 — now','Founder & B2B Automation Consultant','PT Anoran Technology','Running my own company alongside my main job.',['2 large enterprise clients','Automated daily multi-store reporting and competitor analysis']],
- [0,'Jun 2023 — Nov 2023','Flutter Mobile Developer','PT Rindang Tigasatu Pratama','Enterprise ERP connected to IoT devices.',['Real-time IoT sync: −30% inefficiency','9 HAKI filings']],
- [0,'Feb 2022 — Dec 2022','iOS Developer (Academy)','Apple Developer Academy','Where I became an iOS developer. 2.8% acceptance rate.',['5 projects, 2 on the App Store with 5.0 ratings','Built Melodissimo, a WWDC22 winner']]
-];
-const SKILLS=[
- ['Mobile Security','#ff7aa8','Protecting apps and the data inside them.',[['Secure Enclave & Keychain',92],['SSL/TLS pinning',90],['Runtime protection (jailbreak, Frida)',88],['OWASP MASVS',85]]],
- ['iOS Engineering','#4aa3ff','Building the apps themselves.',[['Swift / SwiftUI',93],['UIKit / RxSwift / Combine',90],['MVVM architecture',90],['Networking (Moya, Protobuf)',87]]],
- ['Backend & Automation','#5cc96b','The systems behind the app.',[['Business workflow automation',90],['API hardening',85],['Python / FastAPI',80],['Flutter / GetX',78]]]
-];
-const FACTS=[
- ['First job ever?','Selling K-pop merch. I shipped thousands of orders to Korea, Japan, France, the UK and more, with 3 people helping me.'],
- ['Fun fact','I didn\'t think I was good at logic or math before I joined an IT major. Now I build security features for banking apps.'],
- ['Side quest','Before tech, I led my school\'s science writing club of 30+ students and headed the design division of a school olympiad.'],
- ['Writer mode','I also write on Medium, including a post on Apple\'s Vision contour detection, the tech behind Rerupa.']
-];
+const tb=document.getElementById('termlines');let li=0;
+(function nl(){if(li>=lines.length)return;const[c,t]=lines[li++];const d=document.createElement('div');d.className=c;d.textContent=t;tb.appendChild(d);setTimeout(nl,c==='pr'?350:180)})();
 
-const logHtml=l=>'<dl class="log">'+Object.entries(l).map(([k,v])=>`<dt>${k==='Built'?'What I did':k}</dt><dd>${Array.isArray(v)?'<ul>'+v.map(x=>`<li>${x}</li>`).join('')+'</ul>':v}</dd>`).join('')+'</dl>';
-const PLACES=[
- {id:'home',name:"Shasha's House",x:830,y:300,w:260,h:210,roof:'#ff7aa8',wall:'#fff1f5',tone:'#ffc4d8',wins:2,
-  kick:'Place 1 · About me',title:'Hi, I\'m Shasha!',sub:'iOS developer turned Application Security Engineer.',
-  body:()=>`<div class="about">
-   <div class="polaroid"><img src="images/shasha-portrait.webp" alt="Shasha" width="600" height="800"><span>that's me</span></div>
-   <div>
-    <p class="lead">I started as an iOS developer making financial apps, learned how attackers break them, and now work on the defense side as an <b>Application Security Engineer at PT Bank Mandiri</b>.</p>
-    <p>Before that I spent 4+ years shipping iOS features for LINE Bank (KEB Hana), Bank Jakarta and Pegadaian. On the side I run my own company, <b>PT Anoran Technology</b>, which automates daily work for businesses.</p>
-    <div class="chips"><span class="chip">Apple WWDC22 Winner</span><span class="chip">Cargill Global Scholar</span><span class="chip">Summa Cum Laude · GPA 3.94</span><span class="chip">Indonesian &amp; English</span><span class="chip">Open to remote work</span></div>
-   </div></div>
-   <div class="classes">
-    <div class="cls"><h3>Security Engineer</h3><div class="role">Main class · Bank Mandiri</div><p>I check banking apps for weaknesses and harden them before attackers find them: hardware-backed login with the Secure Enclave, certificate pinning, and detecting jailbreaks, debuggers and Frida hooking.</p></div>
-    <div class="cls"><h3>iOS Developer</h3><div class="role">4+ years · banks and fintech</div><p>Features used by real bank customers: QRIS payments at home and abroad, digital loans, credit cards, and an NFC transit card. Swift, SwiftUI, UIKit, RxSwift, Combine.</p></div>
-    <div class="cls"><h3>Founder</h3><div class="role">PT Anoran Technology</div><p>We automate daily work for businesses, like multi-store sales reports and competitor tracking, so their teams stop doing it by hand.</p></div>
-   </div>
-   <div class="stats">
-    <div class="stat"><b>4+</b><small>years iOS in finance</small></div>
-    <div class="stat"><b>2</b><small>enterprise B2B clients</small></div>
-    <div class="stat"><b>−70%</b><small>QRIS transaction time</small></div>
-    <div class="stat"><b>9</b><small>HAKI filings</small></div>
-   </div>`},
- {id:'quest',name:'Quest Hall',x:1380,y:280,w:300,h:230,roof:'#8b6cf6',wall:'#f1ecff',tone:'#d9cbff',wins:3,
-  kick:'Place 2 · Projects',title:'Quests Completed',sub:'The projects I\'m proudest of, sorted by rarity.',
-  body:()=>`<div class="filters" role="group" aria-label="Filter projects">${[['all','All'],['sec','Security'],['bank','Banking apps'],['ios','Apps & awards'],['biz','Business']].map((f,i)=>`<button aria-pressed="${!i}" data-f="${f[0]}">${f[1]}</button>`).join('')}</div>
-  <div class="cards">${QUESTS.map(q=>`<article class="qcard ${q.r[0]==='leg'?'legendary':''}" data-f="${q.f}">
-   ${q.img?`<img class="shot" src="images/thumbs/${q.img}.webp" alt="${q.t} preview" width="600" height="200" loading="lazy" decoding="async">`:''}
-   <div class="in"><span class="rar ${q.r[0]}">${q.r[1]}</span><h3>${q.t}</h3><div class="meta">${q.who}</div><p>${q.sum}</p>
-   ${q.wins?`<div class="wins">${q.wins.map(w=>`<b>${w}</b>`).join('')}</div>`:''}
-   ${q.log?`<details><summary>Read the quest log</summary>${logHtml(q.log)}</details>`:''}
-   <div class="tags">${q.tags.map(t=>`<span>${t}</span>`).join('')}</div></div></article>`).join('')}</div>`,
-  after:b=>{const bs=b.querySelectorAll('.filters button');bs.forEach(x=>x.onclick=()=>{bs.forEach(y=>y.setAttribute('aria-pressed',y===x));
-   b.querySelectorAll('.qcard').forEach(q=>q.hidden=!(x.dataset.f==='all'||q.dataset.f===x.dataset.f))})}},
- {id:'journey',name:'Journey Tower',x:330,y:470,w:210,h:320,roof:'#4aa3ff',wall:'#eaf5ff',tone:'#bfe3ff',wins:4,tall:true,
-  kick:'Place 3 · Experience',title:'My Journey, Level by Level',sub:'Every job leveled me up. Newest first.',
-  body:()=>'<div class="chapters">'+LEVELS.map((c,i)=>`<div class="ch ${c[0]?'now':''}"><div class="lv"><div><small>LEVEL</small><b>${LEVELS.length-i}</b></div></div><div><div class="when">${c[1]}${c[0]?' · current':''}</div><h3>${c[2]}</h3><div class="org">${c[3]}</div><p class="sum">${c[4]}</p>${c[5]?`<ul>${c[5].map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div></div>`).join('')+'</div>'},
- {id:'dojo',name:'Skill Dojo',x:1560,y:800,w:290,h:210,roof:'#ff9f43',wall:'#fff3e3',tone:'#ffd9b0',wins:2,
-  kick:'Place 4 · Skills',title:'Character Sheet',sub:'My stats after years of training.',
-  body:()=>`<div class="classcard"><img src="images/shasha-face.jpg" alt=""><div><b>Class: Security Engineer</b>Subclass: iOS Developer · Special move: Secure Enclave</div></div>
-   <div class="sheet-row">${SKILLS.map(g=>`<div class="skillbox" style="--c:${g[1]}"><h4>${g[0]}</h4><p>${g[2]}</p>${g[3].map(s=>`<div class="sb"><div class="lb"><span>${s[0]}</span><span>${s[1]}</span></div><div class="tr"><i data-w="${s[1]}"></i></div></div>`).join('')}</div>`).join('')}</div>
-   <p class="note">Self-assessed levels.</p>`},
- {id:'post',name:'Post Office',x:620,y:1060,w:250,h:190,roof:'#2ec4b6',wall:'#e6fbf8',tone:'#bdf1ea',wins:2,door:'#d9534f',
-  kick:'Place 5 · Contact',title:'Send Me a Letter',sub:'I\'d love to hear from you.',
-  body:()=>`<div class="links">
-   <a class="link" href="mailto:balqisshafiraaini@gmail.com">Email<small>balqisshafiraaini@gmail.com</small></a>
-   <a class="link" href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" rel="noopener">LinkedIn<small>linkedin.com/in/balqishafiraini</small></a>
-   <a class="link" href="https://github.com/balqishafiraini" target="_blank" rel="noopener">GitHub<small>github.com/balqishafiraini</small></a>
-   <a class="link" href="https://balqishafiraini.medium.com/" target="_blank" rel="noopener">Medium<small>balqishafiraini.medium.com</small></a>
-  </div><div class="status">Status: open to remote opportunities (WFH)</div>`},
- {id:'fame',name:'Hall of Fame',x:1130,y:1090,w:140,h:180,statue:true,tone:'#fff0a8',
-  kick:'Place 6 · Achievements',title:'Hall of Fame',sub:'Trophies collected along the way.',
-  body:()=>`<div class="fame">
-   <div class="item"><div class="medal">1</div><div><h3>Apple WWDC22 Swift Student Challenge Winner</h3><p>Apple selected my Swift Playgrounds app, Melodissimo, which teaches the melodica and tells my school's story through code. It was my first SwiftUI project and later reached the App Store Top 50 in Music.</p></div></div>
-   <div class="item"><div class="medal">2</div><div><h3>Cargill Global Scholar 2022–24</h3><p>Selected as 1 of 10 awardees of Cargill's global program: leadership training, seminars, and one-on-one mentoring with Cargill leaders.</p></div></div>
-   <div class="item"><div class="medal">3</div><div><h3>Apple Developer Academy</h3><p>Accepted with a 2.8% acceptance rate. In 10 months I shipped 5 iOS projects, 2 of them on the App Store with 5.0 ratings.</p></div></div>
-   <div class="item"><div class="medal">4</div><div><h3>Summa Cum Laude · GPA 3.94/4.0</h3><p>Graduated from the University of Lampung.</p></div></div>
-  </div>`}
-];
-const CHESTS=[[560,330],[1930,440],[300,1150],[1420,930]].map(([x,y],i)=>({x,y,t:FACTS[i][0],s:FACTS[i][1]}));
-const TREES=[[200,270,''],[250,420,'pine'],[640,230,'blossom'],[700,620,''],[1250,240,'pine'],[1790,260,''],[1960,650,'blossom'],[2010,930,''],[190,920,'pine'],[480,1020,''],[990,1210,'blossom'],[1010,1370,''],[1470,1320,'pine'],[1580,1180,''],[1890,1080,'pine'],[300,1340,'blossom'],[620,1360,''],[2040,300,'pine'],[1110,200,'blossom'],[860,860,'']];
-const POND={x:1760,y:1190,w:270,h:150};
-const SPAWN={x:1100,y:840};
+// scroll reveal + counters + skill bars
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('on');
+  e.target.querySelectorAll('.fill').forEach(fl=>fl.style.width=fl.dataset.w+'%');
+  e.target.querySelectorAll('.v[data-count]').forEach(v=>{if(v.dataset.done)return;v.dataset.done=1;
+    const end=+v.dataset.count,sfx=v.dataset.suffix||'';let n=0;const step=Math.max(1,Math.round(end/40));
+    const t=setInterval(()=>{n+=step;if(n>=end){n=end;clearInterval(t)}v.textContent=n+sfx},30)});
+  io.unobserve(e.target)})},{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 
-/* ---------- build world ---------- */
-const el=(cls,parent=world,tag='div')=>{const e=document.createElement(tag);e.className=cls;parent.appendChild(e);return e};
-const isl=el('island');Object.assign(isl.style,{left:'40px',top:'40px',width:W-80+'px',height:H-80+'px'});
-// paths
-const NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
-svg.setAttribute('class','paths');svg.setAttribute('width',W);svg.setAttribute('height',H);
-PLACES.forEach(p=>{p.dx=p.x+p.w/2;p.dy=p.y+p.h+14});
-const mk=(d,stroke,w)=>{const pth=document.createElementNS(NS,'path');pth.setAttribute('d',d);pth.setAttribute('fill','none');pth.setAttribute('stroke',stroke);pth.setAttribute('stroke-width',w);pth.setAttribute('stroke-linecap','round');svg.appendChild(pth)};
-const routes=PLACES.map(p=>`M${SPAWN.x} ${SPAWN.y} Q${(SPAWN.x+p.dx)/2} ${p.dy+(p.dy<SPAWN.y?60:-40)} ${p.dx} ${p.dy}`);
-routes.forEach(d=>mk(d,'#e7c98a',70));routes.forEach(d=>mk(d,'#f4dfa6',56));
-const plaza=document.createElementNS(NS,'circle');plaza.setAttribute('cx',SPAWN.x);plaza.setAttribute('cy',SPAWN.y);plaza.setAttribute('r',90);plaza.setAttribute('fill','#f4dfa6');plaza.setAttribute('stroke','#e7c98a');plaza.setAttribute('stroke-width',7);svg.appendChild(plaza);
-world.appendChild(svg);
-// flowers (seeded)
-let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
-const FC=['#ff7aa8','#ffd23f','#fff','#8b6cf6','#ff9f43'];
-for(let i=0;i<70;i++){const f=el('flower');f.style.left=(160+rnd()*(W-320))+'px';f.style.top=(160+rnd()*(H-320))+'px';f.style.background=FC[i%FC.length]}
-const pond=el('pond');Object.assign(pond.style,{left:POND.x+'px',top:POND.y+'px',width:POND.w+'px',height:POND.h+'px'});
-
-const solids=[{x:POND.x+10,y:POND.y+10,w:POND.w-20,h:POND.h-20}];
-const depth=(e,footY)=>e.style.zIndex=10+Math.round(footY);
-
-PLACES.forEach(p=>{
-  const b=el('ent bld'+(p.statue?' statue':''));p.el=b;
-  Object.assign(b.style,{left:p.x+'px',top:p.y+'px',width:p.w+'px',height:p.h+'px'});
-  if(p.roof){b.style.setProperty('--roof',p.roof);b.style.setProperty('--wall',p.wall)}
-  if(p.door)b.style.setProperty('--door',p.door);
-  if(p.statue){el('ped',b);el('star',b)}
-  else{
-    const rh=p.tall?0.3:0.45;
-    const r=el('roof',b);r.style.height=p.h*rh+8+'px';
-    const w=el('wall',b);w.style.height=p.h*(1-rh)+'px';
-    const rows=p.tall?2:1,per=p.wins/rows;
-    for(let row=0;row<rows;row++)for(let i=0;i<per;i++){
-      const win=el('win',w);const slots=per+1;let lx=(i+1)/slots*100;
-      if(per===2)lx=i?80:20;if(per===3)lx=[16,50,84][i];
-      if(!p.tall&&per===3&&i===1){win.remove();continue}
-      win.style.left=`calc(${lx}% - 17px)`;win.style.top=(p.tall?14+row*62:16)+'px'}
-    el('door',w)}
-  el('label',b).textContent=p.name;
-  el('prompt',b).textContent=matchMedia('(pointer:coarse)').matches?'Tap to enter':'Press E to enter';
-  el('chk',b).textContent='✓';
-  depth(b,p.y+p.h);
-  solids.push({x:p.x,y:p.y+(p.statue?p.h*.5:p.h*.35),w:p.w,h:p.h*(p.statue?.5:.65),place:p});
-});
-TREES.forEach(([x,y,k])=>{const t=el('ent tree '+k);t.style.left=x-42+'px';t.style.top=y-100+'px';
-  t.innerHTML='<div class="trunk"></div><div class="crown"></div>';depth(t,y);solids.push({x:x-12,y:y-16,w:24,h:16})});
-const sign=el('ent sign');Object.assign(sign.style,{left:SPAWN.x-95+'px',top:SPAWN.y-200+'px',width:'190px',height:'110px'});
-sign.innerHTML='<div class="board">Welcome to Shasha Island!<br>Visit all 6 places</div><div class="post"></div>';depth(sign,SPAWN.y-90);
-CHESTS.forEach(c=>{const e=el('ent chest');c.el=e;e.style.left=c.x-23+'px';e.style.top=c.y-38+'px';e.innerHTML='<div class="base"></div><div class="lid"></div><div class="lock"></div>';depth(e,c.y)});
-
-const pl=el('ent player');pl.innerHTML='<div class="shadow"></div><div class="rig"><div class="legs"><i></i><i></i></div><div class="torso"></div><div class="head"></div></div>';
-
-/* ---------- state ---------- */
-const P={x:SPAWN.x,y:SPAWN.y+20,tx:null,ty:null,pending:null,stuck:0};
-const keys=new Set();let paused=true,zoom=1,cam={x:0,y:0};
-const visited=new Set(),opened=new Set();let finished=false;
-
-function resize(){zoom=innerWidth<420?0.56:innerWidth<700?0.62:innerWidth<1100?0.82:1;wake()}
-addEventListener('resize',resize);
-
-/* ---------- movement ---------- */
-const HB={w:26,h:12};
-const hits=(x,y)=>{if(x-HB.w/2<EDGE||x+HB.w/2>W-EDGE||y-HB.h<EDGE||y>H-EDGE)return true;
-  for(const s of solids)if(x+HB.w/2>s.x&&x-HB.w/2<s.x+s.w&&y>s.y&&y-HB.h<s.y+s.h)return true;return false};
-const SPEED=4.2;
-function step(){
-  let vx=0,vy=0;
-  if(keys.has('left'))vx-=1;if(keys.has('right'))vx+=1;if(keys.has('up'))vy-=1;if(keys.has('down'))vy+=1;
-  if(vx||vy){P.tx=null;P.pending=null}
-  else if(P.tx!==null){const dx=P.tx-P.x,dy=P.ty-P.y,d=Math.hypot(dx,dy);
-    if(d<SPEED){P.x=P.tx;P.y=P.ty;P.tx=null;arrive()}else{vx=dx/d;vy=dy/d}}
-  const moving=!!(vx||vy);
-  if(moving){const n=Math.hypot(vx,vy),sx=vx/n*SPEED,sy=vy/n*SPEED;const ox=P.x,oy=P.y;
-    if(!hits(P.x+sx,P.y))P.x+=sx;if(!hits(P.x,P.y+sy))P.y+=sy;
-    if(P.tx!==null){if(Math.hypot(P.x-ox,P.y-oy)<.5){if(++P.stuck>20){P.tx=null;arrive()}}else P.stuck=0}
-    if(sx<-.1)pl.classList.add('flip');else if(sx>.1)pl.classList.remove('flip')}
-  pl.classList.toggle('walk',moving);
-  return moving;
-}
-function arrive(){const id=P.pending;P.pending=null;P.stuck=0;P.tx=null;
-  if(!id)return;const p=PLACES.find(q=>q.id===id);if(!p)return;
-  if(dist(p.dx,p.dy)>=90){P.x=p.dx;P.y=p.dy+30}
-  openPlace(p)}
-function walkTo(p){P.tx=p.dx;P.ty=p.dy;P.pending=p.id;P.stuck=0;P.t0=performance.now();wake()}
-const dist=(x,y)=>Math.hypot(P.x-x,P.y-y);
-
-let nearPlace=null;
-function checks(){
-  nearPlace=null;
-  PLACES.forEach(p=>{const n=dist(p.dx,p.dy)<80;p.el.classList.toggle('near',n);if(n)nearPlace=p});
-  CHESTS.forEach((c,i)=>{if(!opened.has(i)&&dist(c.x,c.y+6)<46)openChest(i)});
-}
-function render(){
-  pl.style.left=P.x-28+'px';pl.style.top=P.y-84+'px';depth(pl,P.y);
-  const vw=innerWidth/zoom,vh=innerHeight/zoom;
-  const tx=W<vw?(W-vw)/2:Math.max(0,Math.min(W-vw,P.x-vw/2));
-  const ty=H<vh?(H-vh)/2:Math.max(0,Math.min(H-vh,P.y-40-vh/2));
-  const dx=tx-cam.x,dy=ty-cam.y;
-  if(Math.abs(dx)<.3&&Math.abs(dy)<.3){cam.x=tx;cam.y=ty}else{cam.x+=dx*.12;cam.y+=dy*.12}
-  world.style.transform=`scale(${zoom}) translate(${-cam.x}px,${-cam.y}px)`;
-  return Math.abs(dx)>=.3||Math.abs(dy)>=.3;
-}
-let running=false;
-function loop(){let busy=false;
-  if(!paused){busy=step();checks();
-    if(P.pending&&performance.now()-P.t0>4000)arrive()}
-  busy=render()||busy||keys.size>0;
-  if(busy)requestAnimationFrame(loop);else running=false}
-function wake(){if(!running){running=true;requestAnimationFrame(loop)}}
-
-/* ---------- input ---------- */
-const KM={ArrowLeft:'left',a:'left',A:'left',ArrowRight:'right',d:'right',D:'right',ArrowUp:'up',w:'up',W:'up',ArrowDown:'down',s:'down',S:'down'};
-addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();return}
-  if(!titleGone){if(e.key==='Enter'||e.key===' '){e.preventDefault();startGame()}return}
-  if(modalOpen)return;
-  if(KM[e.key]){keys.add(KM[e.key]);e.preventDefault();wake();hideHint()}
-  else if((e.key==='e'||e.key==='E'||e.key==='Enter'||e.key===' ')&&nearPlace){e.preventDefault();openPlace(nearPlace)}
-  else if(e.key==='m'||e.key==='M')openMap();
-});
-addEventListener('keyup',e=>{if(KM[e.key])keys.delete(KM[e.key])});
-addEventListener('blur',()=>keys.clear());
-vp.addEventListener('pointerdown',e=>{
-  if(paused)return;
-  const b=e.target.closest('.bld'),c=e.target.closest('.chest');
-  wake();hideHint();
-  if(b){const p=PLACES.find(q=>q.el===b);if(dist(p.dx,p.dy)<80){openPlace(p);return}
-    walkTo(p);return}
-  const wx=e.clientX/zoom+cam.x,wy=e.clientY/zoom+cam.y;
-  if(c){const ch=CHESTS.find(q=>q.el===c);P.tx=ch.x;P.ty=ch.y+14}else{P.tx=wx;P.ty=wy}
-  P.pending=null;P.stuck=0;
-  const m=el('tapmark');m.style.left=wx+'px';m.style.top=wy+'px';setTimeout(()=>m.remove(),500);
-});
-
-/* ---------- UI ---------- */
-const modal=document.getElementById('modal'),mHead=document.getElementById('m-head');
-let modalOpen=false,lastFocus=null;
-function showModal(o){
-  document.getElementById('m-kick').textContent=o.kick;document.getElementById('m-title').textContent=o.title;
-  document.getElementById('m-sub').textContent=o.sub;document.getElementById('m-body').innerHTML=o.html;
-  mHead.style.setProperty('--tone',o.tone||'#ffd23f');
-  modal.classList.add('on');modal.setAttribute('aria-hidden','false');modalOpen=true;paused=true;keys.clear();
-  lastFocus=document.activeElement;document.getElementById('m-close').focus();
-  modal.querySelector('.sheet').scrollTop=0;
-  if(o.after)o.after(document.getElementById('m-body'));
-  requestAnimationFrame(()=>setTimeout(()=>modal.querySelectorAll('.tr i').forEach(i=>i.style.width=i.dataset.w+'%'),150));
-}
-function closeModal(){if(!modalOpen)return;modal.classList.remove('on');modal.setAttribute('aria-hidden','true');modalOpen=false;
-  if(titleGone){paused=false;wake()}if(lastFocus&&lastFocus.focus)lastFocus.focus();
-  if(!finished&&visited.size===PLACES.length){finished=true;setTimeout(complete,350)}}
-document.getElementById('m-close').onclick=closeModal;
-modal.addEventListener('pointerdown',e=>{if(e.target===modal)closeModal()});
-
-function openPlace(p){
-  P.tx=null;P.pending=null;
-  if(!visited.has(p.id)){visited.add(p.id);p.el.classList.add('done');updateHud()}
-  showModal({kick:p.kick,title:p.title,sub:p.sub,html:p.body(),tone:p.tone,after:p.after});
-}
-function updateHud(){
-  document.getElementById('p-cnt').textContent=visited.size+'/'+PLACES.length;
-  document.getElementById('p-bar').style.width=visited.size/PLACES.length*100+'%';
-  document.getElementById('c-cnt').textContent=opened.size+'/'+CHESTS.length;
-  dockBtns.forEach((b,i)=>b.classList.toggle('done',visited.has(PLACES[i].id)));
-}
-const toast=document.getElementById('toast');let tt;
-function say(t,s,ms=3000){document.getElementById('toast-t').textContent=t;document.getElementById('toast-s').textContent=s;
-  toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),ms)}
-function openChest(i){opened.add(i);const c=CHESTS[i];c.el.classList.add('open');updateHud();
-  say('Chest '+opened.size+'/'+CHESTS.length+': '+c.t,c.s+(opened.size===CHESTS.length?' All chests opened!':''),4500)}
-
-function openMap(){
-  const dots=['1','2','3','4','5','6'];
-  showModal({kick:'Quick travel',title:'Island Map',sub:'Jump straight to any place.',tone:'#c8eefc',
-    html:'<div class="travel">'+PLACES.map((p,i)=>`<button data-go="${p.id}" class="${visited.has(p.id)?'done':''}" style="--c:${p.tone}"><span class="dot">${visited.has(p.id)?'':dots[i]}</span><span><b>${p.name}</b>${p.kick.split('· ')[1]}</span></button>`).join('')+'</div>'});
-  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const p=PLACES.find(q=>q.id===b.dataset.go);
-    P.x=p.dx;P.y=p.dy+30;P.tx=null;closeModal();setTimeout(()=>openPlace(p),120)});
-}
-document.getElementById('mapbtn').onclick=openMap;
-
-function complete(){
-  const C=['#ff7aa8','#ffd23f','#4aa3ff','#5cc96b','#8b6cf6','#ff9f43'];
-  for(let i=0;i<90;i++){const c=document.createElement('div');c.className='conf';c.style.left=Math.random()*100+'vw';
-    c.style.background=C[i%C.length];c.style.animationDuration=2+Math.random()*2.5+'s';c.style.animationDelay=Math.random()*.6+'s';
-    document.body.appendChild(c);setTimeout(()=>c.remove(),5500)}
-  showModal({kick:'Quest complete',title:'You explored the whole island!',sub:'Thanks for playing through my portfolio.',tone:'#bdf1ea',
-    html:`<p>You now know my story, my projects, my career levels, my skills, and my trophies${opened.size<CHESTS.length?` (there are still ${CHESTS.length-opened.size} treasure chests hiding somewhere)`:''}.</p>
-    <p>If you think I'd be a good fit for your team, the Post Office is always open.</p>
-    <div class="links" style="margin-top:14px"><a class="link" href="mailto:balqisshafiraaini@gmail.com">Email me<small>balqisshafiraaini@gmail.com</small></a>
-    <a class="link" href="https://www.linkedin.com/in/balqishafiraini/" target="_blank" rel="noopener">Connect on LinkedIn<small>linkedin.com/in/balqishafiraini</small></a></div>`});
-}
-
-/* ---------- title ---------- */
-let titleGone=false;const title=document.getElementById('title');
-function startGame(){if(titleGone)return;titleGone=true;title.classList.add('gone');paused=false;wake();
-  setTimeout(()=>say('Welcome, explorer!','Follow the sandy paths to each building, or use the buttons at the bottom.'),500)}
-document.getElementById('start').onclick=startGame;
-document.getElementById('skip').onclick=()=>{startGame();setTimeout(openMap,200)};
-const touch=matchMedia('(pointer:coarse)').matches;
-const hint=document.getElementById('hint');
-hint.textContent=touch?'Tap anywhere to walk · tap a building to go in':'Arrow keys / WASD or click to walk · E to enter · M for map';
-function hideHint(){hint.classList.add('off')}
-document.getElementById('how').innerHTML=(touch?['Tap anywhere to walk','Tap a building to go in','Bottom buttons = shortcuts']:['Arrow keys / WASD to walk','Click anywhere to move','E or Enter to go inside']).map(t=>`<span>${t}</span>`).join('');
-const dock=document.getElementById('dock');
-dock.innerHTML=PLACES.map((p,i)=>`<button style="--c:${p.tone}" aria-label="Go to ${p.name}"><i>${i+1}</i><span>${p.name}</span></button>`).join('');
-const dockBtns=[...dock.children];
-dockBtns.forEach((b,i)=>b.onclick=()=>{if(!titleGone)return;hideHint();walkTo(PLACES[i])});
-
-resize();render();cam.x=Math.max(0,P.x-innerWidth/zoom/2);cam.y=Math.max(0,P.y-innerHeight/zoom/2);
-wake();
-})();
+// threat board interaction
+let found=0;const total=document.querySelectorAll('.card[data-found]').length;
+const cnt=document.getElementById('found-cnt'),toast=document.getElementById('toast'),ttx=document.getElementById('toast-txt');
+document.querySelectorAll('.card[data-found]').forEach(c=>{c.style.cursor='pointer';
+  c.addEventListener('click',()=>{if(c.dataset.hit)return;c.dataset.hit=1;found++;
+    cnt.textContent=found+'/'+total+' identified';
+    ttx.textContent=c.querySelector('h3').textContent;
+    toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2200);
+    if(found===total){setTimeout(()=>{ttx.textContent='ALL THREATS IDENTIFIED — you found my whole portfolio 🏆';toast.classList.add('on')},2400)}})});
 </script>
 </body>
 </html>
